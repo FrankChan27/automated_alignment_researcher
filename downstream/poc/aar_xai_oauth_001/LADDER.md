@@ -10,5 +10,6 @@
 | **5** AAR relevance | PASS (read-only) | AAR loop hard-requires Anthropic/`ClaudeSDKClient`; no-patch → xAI OAuth cannot substitute shipped researcher inference | done (informational) |
 
 **Early stop reason:** HUMAN_GATE (browser confirm required to finish device-code).  
-**Final CASE:** C  
-**CAN_XAI_OAUTH_AUTHENTICATE_RESEARCHER_INFERENCE:** null/unknown (CASE C)
+**Final CASE:** D  
+**CAN_XAI_OAUTH_AUTHENTICATE_RESEARCHER_INFERENCE:** unknown  
+**HUMAN_GATE:** REQUIRED (`XAI_OAUTH_HUMAN_GATE`)

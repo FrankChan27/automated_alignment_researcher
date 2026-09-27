@@ -11,4 +11,4 @@ Date: 2026-09-28 (UTC+8). Authoritative table: `LADDER.md`.
 | **4** | Session token inference | SKIPPED_NO_SESSION | `evidence/TEST_4_session_inference.txt` |
 | **5** | AAR researcher loop Anthropic hard-bind relevance | DONE | `evidence/TEST_5_aar_relevance.txt` |
 
-Final CASE **C**; CAN null; HUMAN_GATE true.
+Final CASE **D**; CAN unknown; HUMAN_GATE REQUIRED (`XAI_OAUTH_HUMAN_GATE`).

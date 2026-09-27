@@ -5,20 +5,21 @@ Date: 2026-09-28 (UTC+8)
 Branch: `downstream/aar-xai-oauth-001`  
 Scope path: `downstream/poc/aar_xai_oauth_001/` only
 
-## CASE definitions (frozen)
+## CASE definitions (mission-authoritative; coordinator / user brief)
+
+Do **not** invent alternate C/D meanings here. Authoritative for this mission:
 
 | CASE | Meaning |
 |------|---------|
-| **A** | Official xAI OAuth session (browser or device-code) can obtain a refreshable token that successfully authenticates a real inference call to an official xAI/Grok inference endpoint (e.g. `api.x.ai` or `cli-chat-proxy.grok.com`) WITHOUT a newly created/purchased `XAI_API_KEY`. Portability evidence includes headers/endpoints documented. |
-| **B** | Official OAuth/device-code flow exists and can complete to tokens (metadata), but inference call with that session is blocked / wrong audience / requires separate product entitlement — not sufficient alone for researcher inference. |
-| **C** | Device-code or headless OAuth path is documented and discoverable, but this host cannot complete it without Human Gate (browser confirm). Stopped at `HUMAN_GATE` with clear next human step. |
-| **D** | Only API-key auth works for inference; OAuth/session path is CLI-only cosmetic or cannot reach inference. Creating API keys is forbidden → cannot authenticate researcher inference under policy. |
-| **E** | No usable public OAuth surface found (docs dead / discovery fail / product mismatch) → cannot authenticate via OAuth. |
-| **F** | Ambiguous / partial evidence; ladder incomplete for reasons other than Human Gate (network, docs conflict). Must list what would resolve it. |
+| **C** | `XAI_OAUTH_AUTH_ONLY=PASS` — OAuth login 真实存在, but cannot prove programmatic inference we need |
+| **D** | `XAI_OAUTH_HUMAN_GATE=REQUIRED` — official OAuth path exists, env not yet authorized, stop at consent (**not a failure**) |
 
-**Final CASE for this run: C** (see REPORT.md).
+Other letters A/B/E/F remain as mission-wide ladder labels if/when coordinator supplies them; this run only adjudicates C vs D.
 
-`CAN_XAI_OAUTH_AUTHENTICATE_RESEARCHER_INFERENCE` = **null/unknown** for CASE C (true only for A; false for B/D/E).
+**Final CASE for this run: D** (see REPORT.md / STATUS.json).
+
+`CAN_XAI_OAUTH_AUTHENTICATE_RESEARCHER_INFERENCE` = **unknown**.  
+`HUMAN_GATE` = **REQUIRED**. `XAI_OAUTH_AUTH_ONLY` = not PASS (no `auth.json` / completed session).
 
 ---
 
