@@ -32,5 +32,6 @@
   "ADAPTER_IMPLEMENTED": false,
   "SECRETS_IN_EVIDENCE": false,
   "AAR_GENERIC_AAR_MODIFIED": false,
-  "timestamp_utc8": "2026-09-28T02:05:53+08:00"
+  "timestamp_utc8": "2026-09-28T02:05:53+08:00",
+  "HEAD_SHA": "4d048f56b8841d779e8c2b033d19a9bed7d57e43"
 }
