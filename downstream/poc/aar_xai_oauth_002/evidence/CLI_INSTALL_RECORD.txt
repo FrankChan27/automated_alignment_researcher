@@ -1,0 +1,18 @@
+DATE_UTC8=2026-09-28T02:13:16+0800
+GROK_CLI_SOURCE=official_xai
+VERSION=grok 1.0.41 (4220f3b224a6)
+PATH=/home/box/.grok/bin/grok
+PATH_RESOLVED=/home/box/.grok/downloads/grok-linux-x86_64
+PATH_ON_PATH=/home/box/.local/bin/grok -> /home/box/.grok/bin/grok
+INSTALL_METHOD=official_x.ai_cli_install.sh_layout (installer=internal in ~/.grok/config.toml); binary size+MD5 match https://x.ai/cli/grok-1.0.41-linux-x86_64
+OFFICIAL_SOURCE_VERIFIED=true
+OFFICIAL_CHANNEL_POINTER=https://x.ai/cli/stable -> 1.0.41
+OFFICIAL_ARTIFACT_URL=https://x.ai/cli/grok-1.0.41-linux-x86_64
+LOCAL_BYTES=165967424
+REMOTE_BYTES=165967424
+LOCAL_MD5=a0ad7ff0132e5a7bb6b661163400e5f5
+REMOTE_MD5_FROM_X_GOOG_HASH=a0ad7ff0132e5a7bb6b661163400e5f5
+MD5_MATCH=true
+ALT_OFFICIAL_NPM=@xai-official/grok@1.0.41 (documented on docs.x.ai/build/enterprise as npm alternative)
+NO_THIRD_PARTY_OAUTH_BRIDGE=true
+AUTH_JSON=/home/box/.grok/auth.json ABSENT

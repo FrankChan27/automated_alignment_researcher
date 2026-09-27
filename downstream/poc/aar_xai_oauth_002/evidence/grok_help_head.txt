@@ -1,0 +1,40 @@
+Grok Build TUI
+
+Usage: grok [OPTIONS] [PROMPT] [COMMAND]
+
+Arguments:
+  [PROMPT]
+          Initial prompt for the interactive session, e.g. `grok "fix the bug"` or `grok --worktree=feat "create this feature"`
+
+Options:
+      --agent <NAME>
+          Agent name or definition file path
+
+      --agents <JSON>
+          Inline subagent definitions as JSON
+
+      --allow <RULE>
+          Permission allow rule (compat alias: --allowedTools)
+
+      --always-approve
+          Auto-approve all tool executions
+
+  -c, --continue
+          Continue the most recent session for the current working directory
+
+      --cwd <CWD>
+          Working directory
+
+      --debug
+          Enable debug logging
+
+      --debug-file <FILE>
+          Write debug logs to FILE
+
+      --deny <RULE>
+          Permission deny rule (compat alias: --disallowedTools)
+
+      --disable-web-search
+          Disable web search and web fetch tools
+
+      --disallowed-tools <TOOLS>

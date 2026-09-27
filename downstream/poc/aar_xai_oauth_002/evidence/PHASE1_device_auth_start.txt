@@ -1,0 +1,23 @@
+PHASE1 live device-auth start (redacted; no secrets)
+Flow: grok login --device-auth
+Verification host/path: https://accounts.x.ai/oauth2/device
+user_code: PRESENT (value not stored in git)
+auth.json: ABSENT
+auto_consent: false
+waiting_process: RUNNING (local PID retained outside git)
+HUMAN_GATE: REQUIRED
+
+Redacted CLI output:
+
+To sign in, open this URL in your browser:
+
+  https://accounts.x.ai/oauth2/device?user_code=[REDACTED_USER_CODE]
+
+Confirm this code in your browser:
+
+  [REDACTED_USER_CODE]
+
+[90mOnly continue with a code you requested. Don't share it with anyone.[0m
+
+Waiting for authorization...
+

@@ -1,0 +1,11 @@
+ACCESS_DATE_UTC8=2026-09-28 (also 2026-09-28T02:13:16+0800)
+PRIMARY_INSTALL_DOC=https://docs.x.ai/build/overview
+PRIMARY_INSTALL_CMD=curl -fsSL https://x.ai/cli/install.sh | bash
+WINDOWS_INSTALL=irm https://x.ai/cli/install.ps1 | iex
+MARKETING_INSTALL_PAGE=https://x.ai/cli
+CLI_REFERENCE=https://docs.x.ai/build/cli/reference  (grok login / --device-auth)
+ENTERPRISE_AUTH=https://docs.x.ai/build/enterprise  (device code; npm alt install)
+INSTALL_SCRIPT=https://x.ai/cli/install.sh
+STABLE_CHANNEL=https://x.ai/cli/stable => 1.0.41
+AUTH_GUIDE_GITHUB=https://github.com/xai-org/grok-build/blob/main/crates/codegen/xai-grok-pager/docs/user-guide/02-authentication.md
+NOTE=curl|bash re-exec blocked by Auto-review this shift; existing official layout verified by MD5+size against official artifact URL.

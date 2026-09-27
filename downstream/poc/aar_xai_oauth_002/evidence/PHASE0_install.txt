@@ -1,0 +1,96 @@
+=== PHASE0 install 2026-09-28T02:11:33+08:00 ===
+METHOD_ATTEMPT=1 curl https://x.ai/cli/install.sh
+install_script_bytes=19501
+#!/bin/bash
+#
+# Grok CLI installer — https://x.ai/cli/install.sh
+#
+# Auth: GROK_DEPLOYMENT_KEY (takes precedence) or ~/.grok/auth.json from `grok login`.
+# Env: GROK_CHANNEL (stable|alpha|enterprise, default: stable), GROK_BIN_DIR, GROK_PROXY_URL
+#
+# Usage:
+#   curl -fsSL https://x.ai/cli/install.sh | bash            # latest stable
+#   curl -fsSL https://x.ai/cli/install.sh | bash -s 0.1.42  # specific version
+#   GROK_DEPLOYMENT_KEY=[REDACTED] bash <(curl -fsSL https://x.ai/cli/install.sh)
+#
+# Windows: run under Git for Windows / MSYS2 Bash (same curl | bash flow); WSL
+# uses the Linux binary.
+
+set -e
+
+TARGET="$1"
+
+if [[ -n "$TARGET" ]] && [[ ! "$TARGET" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[A-Za-z0-9._]+)?$ ]]; then
+    echo "Invalid version format: $TARGET (expected X.Y.Z or X.Y.Z-suffix)" >&2
+    exit 1
+fi
+
+DOWNLOADER=""
+if command -v curl >/dev/null 2>&1; then
+    DOWNLOADER="curl"
+elif command -v wget >/dev/null 2>&1; then
+    DOWNLOADER="wget"
+else
+    echo "Either curl or wget is required but neither is installed" >&2
+    exit 1
+fi
+
+download_file() {
+    local url="$1" output="$2"
+    if [ "$DOWNLOADER" = "curl" ]; then
+        if [ -n "$output" ]; then
+            curl -fsSL -o "$output" "$url"
+        else
+Fetching latest stable version...
+Installing Grok 1.0.41 (linux-x86_64)...
+  Downloading grok 1.0.41...
+  Binary linked to /home/box/.grok/bin/grok and /home/box/.grok/bin/agent.
+Grok 1.0.41 installed to /home/box/.grok/bin/grok
+  Symlinked /home/box/.local/bin/grok -> /home/box/.grok/bin/grok
+  Symlinked /home/box/.local/bin/agent -> /home/box/.grok/bin/agent
+  Updated /home/box/.grok/bin in PATH in /home/box/.bashrc.
+
+Run 'grok' or 'agent' to get started!
+--- after install ---
+/home/box/.local/bin/grok
+grok 1.0.41 (4220f3b224a6)
+Grok Build TUI
+
+Usage: grok [OPTIONS] [PROMPT] [COMMAND]
+
+Arguments:
+  [PROMPT]
+          Initial prompt for the interactive session, e.g. `grok "fix the bug"` or `grok --worktree=feat "create this feature"`
+
+Options:
+      --agent <NAME>
+          Agent name or definition file path
+
+      --agents <JSON>
+          Inline subagent definitions as JSON
+
+      --allow <RULE>
+          Permission allow rule (compat alias: --allowedTools)
+
+      --always-approve
+          Auto-approve all tool executions
+
+  -c, --continue
+          Continue the most recent session for the current working directory
+
+      --cwd <CWD>
+          Working directory
+
+      --debug
+          Enable debug logging
+
+      --debug-file <FILE>
+          Write debug logs to FILE
+
+      --deny <RULE>
+          Permission deny rule (compat alias: --disallowedTools)
+
+      --disable-web-search
+          Disable web search and web fetch tools
+
+      --disallowed-tools <TOOLS>

@@ -1,0 +1,6 @@
+*.token
+*.pem
+auth.json
+**/auth.json
+.env
+*_SECRET*

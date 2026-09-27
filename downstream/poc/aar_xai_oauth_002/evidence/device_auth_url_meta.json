@@ -1,0 +1,13 @@
+{
+  "device_verify_urls": [
+    {
+      "host": "accounts.x.ai",
+      "path": "/oauth2/device",
+      "query_param_names": [
+        "user_code"
+      ]
+    }
+  ],
+  "flow": "device_code",
+  "command": "grok login --device-auth"
+}
