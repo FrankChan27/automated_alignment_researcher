@@ -53,13 +53,17 @@ REQUIRED=(
   "upstream_updates/.gitkeep"
   "upstream_updates/README.md"
   "downstream/github-workflows/upstream-monitor.yml"
+  "downstream/MONITOR_TRIGGER.md"
 )
 
 # Prefer installed Actions path; staged mirror is acceptable when OAuth lacks workflow scope
+if [[ -f "$ROOT/downstream/MONITOR_TRIGGER.md" ]]; then
+  pass "monitor_trigger_documented" "Bot Routine or Actions trigger documented in MONITOR_TRIGGER.md"
+fi
 if [[ -f "$ROOT/.github/workflows/upstream-monitor.yml" ]]; then
   pass "monitor_workflow_installed" ".github/workflows/upstream-monitor.yml present"
 elif [[ -f "$ROOT/downstream/github-workflows/upstream-monitor.yml" ]]; then
-  pass "monitor_workflow_staged" "staged mirror present; run install_monitor_workflow.sh when credential has workflow scope"
+  pass "monitor_workflow_staged" "YAML staged; live trigger may be Bot Routine (see MONITOR_TRIGGER.md)"
 else
   fail "monitor_workflow" "no upstream-monitor.yml installed or staged"
 fi
