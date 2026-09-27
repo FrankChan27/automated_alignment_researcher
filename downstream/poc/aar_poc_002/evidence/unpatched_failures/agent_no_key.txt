@@ -1,4 +1,4 @@
-=== UNPATCHED agent (no ANTHROPIC_API_KEY) 2026-09-28T01:54:09+08:00 ===
-ANTHROPIC_API_KEY set? yes
+=== UNPATCHED agent (explicitly unset ANTHROPIC_API_KEY) 2026-09-28T01:54:24+08:00 ===
+ANTHROPIC_API_KEY=<unset>
 Error: ANTHROPIC_API_KEY is required for agent mode
 EXIT=1

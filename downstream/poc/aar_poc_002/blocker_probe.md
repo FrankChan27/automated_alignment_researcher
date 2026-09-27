@@ -191,3 +191,13 @@ ModuleNotFoundError: No module named 'aar.utils.hierarchical_cache'
 2. `claude` CLI absent on PATH.
 3. Server `__main__` requires missing `aar.utils.hierarchical_cache` (upstream defect — do not silent-patch).
 4. Optional: `MONITOR_REQUIRED` policy for vector toy; eval spawn must use `adapter.eval` (or equivalent) so benches register.
+
+---
+
+## Freeze (Anthropic forbidden)
+
+User has no Anthropic key and forbids Anthropic use.  
+**`UPSTREAM_NATIVE_UNPATCHED=BLOCKED`** for the official agent loop.
+
+Details: `evidence/anthropic_hard_bind.md`, `evidence/FREEZE_VERDICT.md`.  
+Eval-only vector smoke remains PASS: `evidence/freeze_eval_only_smoke.txt`.

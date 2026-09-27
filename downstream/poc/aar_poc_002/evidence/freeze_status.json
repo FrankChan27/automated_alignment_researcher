@@ -1,0 +1,18 @@
+{
+  "poc": "AAR-POC-002",
+  "branch": "downstream/aar-poc-002-native",
+  "timestamp_utc8": "2026-09-28T01:54:24+08:00",
+  "UPSTREAM_NATIVE_UNPATCHED": "BLOCKED",
+  "block_reason": "Anthropic hard-bind; user has no ANTHROPIC_API_KEY and forbids Anthropic",
+  "citations": [
+    "run.py:33-35",
+    "aar/research_loop/agent.py:21-28,226,234,314,398",
+    "aar/research_loop/tools/server_api_tools.py:15",
+    "aar/research_loop/monitor.py:16,263-271,430-438"
+  ],
+  "CAN_WE_SCORE_VECTOR_VIA_NATIVE_EVAL": "PASS",
+  "REPO_SECRET_PRESENT": false,
+  "aar_core_patched": false,
+  "substitute_loop": false,
+  "provider_swap": false
+}
