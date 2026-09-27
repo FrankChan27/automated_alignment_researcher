@@ -164,3 +164,9 @@ Installing into `.github/workflows/upstream-monitor.yml` (via
 credential with the GitHub **`workflow`** OAuth scope. OAuth apps with only
 `repo` scope are refused by GitHub when creating/updating workflow files.
 Until installed, Actions will not schedule; `monitor_once.sh` remains usable locally.
+
+---
+
+## Live monitor trigger (DOWNSTREAM-LOCAL amendment)
+
+As of 2026-09-28 Human chose **Grok Bot Routine** (Beijing 04:20) instead of installing GitHub Actions. See `downstream/MONITOR_TRIGGER.md`. Detection/classify/Draft-PR policy above is unchanged.
