@@ -1,0 +1,34 @@
+{
+  "poc": "AAR-POC-002",
+  "REPO": "/workspace/aar-infra/automated_alignment_researcher",
+  "BRANCH": "downstream/aar-poc-002-native",
+  "BASE_SHA": "c145825e096547ea7f42014aa3474041ec64a643",
+  "HEAD_SHA": "13a7d2ed75cf471b926f19405a905548a3ea98c3",
+  "PINNED_UPSTREAM_SHA": "02dbe9d2cadc553720d17cdf6259c0b8727e6cde",
+  "ENTRYPOINT_ATTEMPTED": "python run.py agent --local (AutonomousAgentLoop / ClaudeSDKClient)",
+  "UPSTREAM_NATIVE_UNPATCHED": "BLOCKED",
+  "blockers": [
+    "ANTHROPIC_API_KEY required (run.py:33-34); user has no key and forbids Anthropic",
+    "Claude Agent SDK hard-bind (aar/research_loop/agent.py ClaudeSDKClient)",
+    "Claude Code CLI (claude) absent on PATH (moot without key)",
+    "Optional secondary: aar.utils.hierarchical_cache missing for server __main__ (not patched)"
+  ],
+  "Reviewer": "deferred_by_user",
+  "agent_loop": false,
+  "Anthropic_used": false,
+  "PATCHED_provider_swap": false,
+  "substitute_001_loop": false,
+  "CAN_WE_SCORE_VECTOR_VIA_NATIVE_EVAL": "PASS",
+  "REPO_SECRET_PRESENT": false,
+  "secrets_dir": "/home/box/aar-poc-002-secrets (mode 0700, outside repo)",
+  "eval_evidence": [
+    "evidence/freeze_eval_only_smoke.txt",
+    "evidence/vector_eval_smoke.txt",
+    "evidence/smoke/",
+    "evidence/FREEZE_VERDICT.md",
+    "evidence/anthropic_hard_bind.md",
+    "evidence/repo_secret_absent.txt",
+    "evidence/unpatched_failures/UPSTREAM_NATIVE_UNPATCHED_BLOCKED.md"
+  ],
+  "timestamp_utc8": "2026-09-28T01:55:54+08:00"
+}
