@@ -1,0 +1,16 @@
+# PHASE4 inference smoke (ONE call, official grok CLI)
+# API_KEY_USED=false
+# AUTH_METHOD=local_oauth_session (~/.grok/auth.json oidc)
+# HOST_CLASS=cli_native (grok CLI → grok.com / xAI Grok Build surface; NOT hand-Bearer api.x.ai)
+# MODEL=grok-4.7
+# COMMAND=grok --single <PROMPT> --verbatim --model grok-4.7 --max-turns 1 --permission-mode dontAsk --disallowed-tools ... --disable-web-search --output-format plain --no-alt-screen
+# PROMPT_INTENT=elicit exact token XAI_OAUTH_RESEARCHER_SMOKE_OK
+# exit_code=0
+# EXPECTED=XAI_OAUTH_RESEARCHER_SMOKE_OK
+# GOT_EXACT=true
+
+=== STDOUT (secrets redacted; response is plaintext token only) ===
+XAI_OAUTH_RESEARCHER_SMOKE_OK
+
+=== STDERR ===
+(empty)

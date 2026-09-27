@@ -1,0 +1,23 @@
+{
+  "AUTH_JSON_PRESENT": true,
+  "mode_oct": "0o600",
+  "size_bytes": 1764,
+  "mtime": "2026-09-28T02:14:29.979381+08:00",
+  "auth_mode": "oidc",
+  "oidc_issuer": "https://auth.x.ai",
+  "oidc_client_id": "b1a00492-073a-47ea-816f-4c329264a828",
+  "expires_at": "2026-09-28T00:14:29.860440914Z",
+  "create_time": "2026-09-27T18:14:29.860440914Z",
+  "key": {
+    "PRESENT": true,
+    "LEN": 914
+  },
+  "refresh_token": {
+    "PRESENT": true,
+    "LEN": 86
+  },
+  "IDENTITY_FIELDS_PRESENT": true,
+  "SCOPE": "SCOPE_UNKNOWN",
+  "auth_entry_key_shape": "https://auth.x.ai::<oidc_client_id>",
+  "coding_data_retention_opt_out": true
+}

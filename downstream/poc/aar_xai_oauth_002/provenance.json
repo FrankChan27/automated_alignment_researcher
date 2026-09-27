@@ -6,9 +6,29 @@
   "PRIOR_POC": "downstream/poc/aar_xai_oauth_001",
   "PRIOR_FINAL_CASE": "D",
   "OUTPUT_DIR": "downstream/poc/aar_xai_oauth_002",
-  "HUMAN_GATE": "WAITING_FOR_USER_CONSENT",
+  "HUMAN_GATE": "COMPLETED",
   "AUTHORIZATION_STARTED": true,
-  "CONSENT_COMPLETED": false,
+  "CONSENT_COMPLETED": true,
+  "FINAL_CASE": "A",
+  "CAN_XAI_OAUTH_AUTHENTICATE_RESEARCHER_INFERENCE": true,
+  "API_KEY_USED": false,
+  "SMOKE_EXACT": true,
+  "SMOKE_MODEL": "grok-4.7",
+  "SMOKE_HOST_CLASS": "cli_native",
+  "API_XAI_OAUTH": "NOT_TESTED_NOT_JUSTIFIED",
   "SECRETS_IN_EVIDENCE": false,
-  "timestamp_utc8": "2026-09-28T02:14:07+0800"
+  "timestamp_utc8": "2026-09-28T02:16:55+0800",
+  "AUTH_JSON_PRESENT": true,
+  "SMOKE_EXACT_MATCH": true,
+  "PHASES_COMPLETE": [
+    "0",
+    "1_AUTH_STARTED",
+    "2",
+    "3",
+    "4",
+    "5"
+  ],
+  "ADAPTER_IMPLEMENTED": false,
+  "ADAPTER_NEEDED": true,
+  "READY_FOR_RESEARCHER_INFERENCE_VIA_GROK_CLI": true
 }

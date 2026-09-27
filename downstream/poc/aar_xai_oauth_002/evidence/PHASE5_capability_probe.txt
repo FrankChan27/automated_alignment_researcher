@@ -1,0 +1,37 @@
+# PHASE5 capability probe evidence (CLI surface; UNKNOWN ok; no extra inference beyond PHASE4 smoke)
+# timestamp_utc8=2026-09-28T02:15:42+0800
+
+## NONINTERACTIVE
+FLAG: --single / -p (Single-turn prompt. Prints the response to stdout and exits)
+OBSERVED_IN_PHASE4=true (exit 0, exact smoke token)
+RESULT=SUPPORTED
+
+## MACHINE_READABLE
+FLAG: --output-format plain|json|streaming-json|streaming-messages-json
+FLAG: --json-schema (constrained JSON; implies --output-format json)
+OBSERVED: help documents formats; PHASE4 used plain successfully
+RESULT=SUPPORTED (help+plain observed; json formats documented not separately smoked)
+
+## MULTI_TURN
+FLAG: default interactive TUI; --max-turns N; agent subcommand; --continue / --resume
+OBSERVED: help documents multi-turn agent loop; not separately smoked (ONE inference budget used)
+RESULT=SUPPORTED_DOCUMENTED (runtime multi-turn beyond smoke=UNKNOWN_NOT_SMOKED)
+
+## TOOLS
+FLAG: --tools, --allow/--deny, --disallowed-tools, --always-approve, --permission-mode
+OBSERVED: help documents tool allow/deny; PHASE4 used --disallowed-tools successfully
+RESULT=SUPPORTED_DOCUMENTED (tool execution not separately smoked)
+
+## SESSION_RESUME
+FLAG: --resume / -r, --continue / -c, --fork-session, sessions list/search
+OBSERVED: help documents resume; not runtime-smoked
+RESULT=SUPPORTED_DOCUMENTED (runtime resume=UNKNOWN_NOT_SMOKED)
+
+## PROGRAMMATIC
+SURFACE: official grok CLI binary; subcommands models/login/agent; --single for scripting
+OBSERVED: PHASE3 models + PHASE4 --single worked noninteractively with OAuth session file
+RESULT=SUPPORTED
+
+## api.x.ai OAuth (PHASE6)
+RESULT=NOT_TESTED_NOT_JUSTIFIED
+RATIONALE: mission forbids hand-stuffing Bearer into api.x.ai; no clear official docs justifying CLI OAuth token reuse against public REST api.x.ai in this POC; public API historically API-key Bearer

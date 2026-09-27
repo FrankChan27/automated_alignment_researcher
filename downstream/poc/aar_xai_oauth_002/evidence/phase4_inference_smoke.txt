@@ -1,0 +1,22 @@
+PHASE 4 — ONE inference smoke (official grok CLI; local OAuth session)
+Date (UTC+8): 2026-09-28
+
+command_used:
+  /home/box/.local/bin/grok --cwd /tmp/aar_xai_oauth_002_smoke -p 'Return exactly this string and nothing else: XAI_OAUTH_RESEARCHER_SMOKE_OK' --output-format plain --max-turns 1 --permission-mode dontAsk --disable-web-search --no-subagents --verbatim
+
+cwd: /tmp/aar_xai_oauth_002_smoke (throwaway; not git repo)
+retries: 0 (first attempt reached model successfully)
+exit_code: 0
+SMOKE_EXACT_MATCH: true
+output_contained_exact_token_XAI_OAUTH_RESEARCHER_SMOKE_OK: true
+stderr_empty: true
+
+truncated_sanitized_stdout_first_500_chars:
+---
+XAI_OAUTH_RESEARCHER_SMOKE_OK
+
+---
+
+notes:
+- JWT/Bearer redaction applied as precaution; no secrets observed in stdout/stderr.
+- At most ONE smoke call executed (coordinator limit).

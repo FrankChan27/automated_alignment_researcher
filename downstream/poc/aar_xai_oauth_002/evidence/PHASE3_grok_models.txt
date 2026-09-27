@@ -1,0 +1,19 @@
+# grok models (official CLI auth probe)
+# API_KEY_USED=false
+# exit_code=0
+# stdout_lines=9
+
+=== STDOUT ===
+You are logged in with grok.com.
+
+Default model: grok-4.7
+
+Available models:
+  * grok-4.7 (default)
+  - grok-4.7-build-fast
+  - grok-4.6
+  - grok-4.5
+
+
+=== STDERR ===
+

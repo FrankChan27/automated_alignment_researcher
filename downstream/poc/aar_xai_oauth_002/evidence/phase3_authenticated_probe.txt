@@ -1,0 +1,123 @@
+PHASE 3 — Official authenticated probe (grok CLI only; no raw api.x.ai)
+Date (UTC+8): 2026-09-28
+
+1) grok models
+   command: /home/box/.local/bin/grok models
+   exit_code: 0
+   logged_in_hint: "You are logged in with grok.com."
+   default_model: grok-4.7
+   model_count: 4
+   model_names_public:
+     - grok-4.7 (default)
+     - grok-4.7-build-fast
+     - grok-4.6
+     - grok-4.5
+   stderr: (empty)
+   secrets_in_output: none observed (redaction applied as precaution)
+
+2) grok doctor --json (optional terminal diagnostics)
+   exit_code: 0
+   stdout_redacted_head:
+   {
+     "schemaVersion": "1",
+     "facts": {
+       "terminal": {
+         "name": "unknown",
+         "xtversion": {
+           "status": "unavailable",
+           "value": null
+         }
+       },
+       "multiplexer": {
+         "kind": "undetected",
+         "byobu": null
+       },
+       "ssh": false,
+       "color": {
+         "level": {
+           "status": "available",
+           "value": "none"
+         },
+         "availableThemes": [
+           "groknight",
+           "grokday"
+         ],
+         "totalThemes": 5
+       },
+       "keyboard": null,
+       "newline": {
+         "kind": "no_kitty_keyboard_protocol"
+       },
+       "clipboard": {
+         "nativeRoute": true,
+         "nativeTool": "arboard",
+         "nativePreflight": "local_available",
+         "tmuxRoute": false,
+         "osc52Route": true,
+         "osc52Capability": "unknown",
+         "wrapSink": false,
+         "displayServer": "x11",
+         "containerNoDisplay": false,
+         "dataControl": "not_applicable",
+         "delivery": "confirmed",
+         "fix": null
+       },
+       "voice": {
+         "status": "missing",
+         "error": "no microphone recorder found on PATH: install pipewire (pw-record), pulseaudio-utils (parec), or alsa-utils (arecord)"
+       }
+     },
+     "findings": [
+       {
+         "id": "terminal.limited-color",
+         "disposition": "issue",
+         "message": "Colors are off because `NO_COLOR` is set",
+         "remediation": null,
+         "automaticRemediation": null,
+         "note": "Unset `NO_COLOR`, then restart Grok."
+       },
+       {
+         "id": "terminal.newline-fallback",
+         "disposition": "recommendation",
+         "message": "Shift+Enter can't insert a newline because the keyboard protocol is unavailable",
+         "remediation": null,
+         "automaticRemediation": null,
+         "note": "Use Alt+Enter to insert a newline. If your terminal supports the Kitty keyboard protocol, enable it and restart Grok."
+       },
+       {
+         "id": "voice.no-input-device",
+         "disposition": "issue",
+         "message": "Voice dictation is unavailable: no microphone recorder found on PATH: install pipewire (pw-record), pulseaudio-utils (parec), or alsa-utils (arecord)",
+         "remediation": null,
+         "automaticRemediation": null,
+         "note": "Connect or select a microphone in your system sound settings. On Linux, install a supported audio recorder if none was found on PATH. Then run `/doctor` or `grok doctor` again. Doctor can't detect denied macOS microphone access when the system returns silence; follow the message shown when dictation fails."
+       }
+     ],
+     "probeNotes": [
+       {
+         "probe": "runtime.fullscreen-active",
+         "status": "unavailable",
+         "message": null
+       },
+       {
+         "probe": "runtime.kitty-flags-pushed",
+         "status": "unavailable",
+         "message": null
+       },
+       {
+         "probe": "runtime.xtversion",
+         "status": "unavailable",
+         "message": null
+       }
+     ],
+     "counts": {
+       "issues": 2,
+       "recommendations": 1,
+       "probeNotes": 3
+     }
+   }
+
+   stderr_redacted_head:
+
+
+RESULT: AUTHENTICATED_MODELS_PROBE=PASS
