@@ -3,7 +3,7 @@
 **Date:** 2026-09-28 (UTC+8)  
 **Branch:** `downstream/aar-xai-oauth-001`  
 **Parent HEAD:** `71842398db939801bafcfe98a66dbeb922a15297`  
-**HEAD_SHA:** `e9945a49e95f9d4909bd1a8b65268f597ebc86ce`  
+**RESEARCH_SHA:** `4d048f56b8841d779e8c2b033d19a9bed7d57e43` (branch tip = git tip of this branch)  
 **Mission:** Determine `CAN_XAI_OAUTH_AUTHENTICATE_RESEARCHER_INFERENCE` and `FINAL_CASE` ∈ {A..F}.
 
 ## Verdict

@@ -33,6 +33,7 @@
   "SECRETS_IN_EVIDENCE": false,
   "AAR_GENERIC_AAR_MODIFIED": false,
   "timestamp_utc8": "2026-09-28T02:05:53+08:00",
-  "HEAD_SHA": "e9945a49e95f9d4909bd1a8b65268f597ebc86ce",
-  "RESEARCH_COMMIT": "4d048f56b8841d779e8c2b033d19a9bed7d57e43"
+  "RESEARCH_COMMIT": "4d048f56b8841d779e8c2b033d19a9bed7d57e43",
+  "RESEARCH_SHA": "4d048f56b8841d779e8c2b033d19a9bed7d57e43",
+  "NOTE": "Branch tip is git tip of downstream/aar-xai-oauth-001; RESEARCH_SHA is primary research commit."
 }
