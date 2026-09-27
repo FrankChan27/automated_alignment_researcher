@@ -24,3 +24,5 @@ Related:
 - `../.github/workflows/upstream-monitor.yml` — daily schedule + `workflow_dispatch`
 
 See `DOWNSTREAM_POLICY.md` for full rules. Auto-merge of upstream into `main` is forbidden.
+
+**Live monitor trigger:** Grok Bot Routine (Beijing 04:20). See `MONITOR_TRIGGER.md`. GitHub Actions workflow is **not** installed on remote; YAML is staged only.

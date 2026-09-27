@@ -12,7 +12,7 @@ YuehHanChen engine.
 | Layer | What it is | Where it lives |
 |-------|------------|----------------|
 | **UPSTREAM ENGINE** | Core AAR harness, eval pod, generic_aar template, isolation docs, research loop | `aar/`, `generic_aar/`, `configs/`, root docs (`ISOLATION.md`, etc.) owned by YuehHanChen |
-| **DOWNSTREAM ADAPTER** | Fork-local governance, pin, monitor, sync Draft PRs, update manifests | `downstream/`, `upstream_updates/`, `.github/workflows/upstream-monitor.yml` |
+| **DOWNSTREAM ADAPTER** | Fork-local governance, pin, monitor, sync Draft PRs, update manifests | `downstream/`, `upstream_updates/`; live monitor = Bot Routine (see `MONITOR_TRIGGER.md`); Actions YAML optional under `downstream/github-workflows/` |
 
 Downstream must not silently rewrite engine semantics. Prefer preserving upstream
 paths on sync branches; resolve conflicts by keeping downstream adapter files
@@ -159,7 +159,7 @@ Canonical workflow YAML is committed at:
 
 It defines `schedule: cron: "20 20 * * *"` and `workflow_dispatch`.
 
-Installing into `.github/workflows/upstream-monitor.yml` (via
+Installing into `downstream/github-workflows/upstream-monitor.yml` (staged; live trigger = Bot Routine) (via
 `downstream/scripts/install_monitor_workflow.sh` + push) requires a git
 credential with the GitHub **`workflow`** OAuth scope. OAuth apps with only
 `repo` scope are refused by GitHub when creating/updating workflow files.
