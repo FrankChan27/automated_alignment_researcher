@@ -1,49 +1,25 @@
 # AAR-POC-002 STATUS
 
-**Updated:** 2026-09-28 ~01:54 UTC+8  
-**Branch:** `downstream/aar-poc-002-native`  
-**HUMAN=0** — no Anthropic key; A-company forbidden; **no agent-loop attempts**.
-
-## Verdict
-
-| Flag | Value |
+| Gate | Result |
 |------|--------|
-| **UPSTREAM_NATIVE_UNPATCHED** (agent loop) | **BLOCKED** — Claude hard-bind |
-| Eval/adapter smoke (vector → `run_eval`) | **PASS** |
-| Deletion proof (`aar/`+`generic_aar/` required) | **PASS** (`DELETION_PROOF_OK`) |
-| Fake/native substitute loop | **NOT USED** (no POC-001 `run_loop`/`proposer`) |
+| execution_path.md | DONE |
+| Claude / Anthropic hard-bind | YES — `evidence/anthropic_hard_bind.md`, `evidence/unpatched_failures/UPSTREAM_NATIVE_UNPATCHED_BLOCKED.md` |
+| **UPSTREAM_NATIVE_UNPATCHED** (agent ≥5 iters via `run.py agent`) | **BLOCKED** |
+| Eval/adapter (no agent) via native `run_eval` | **PASS** (`evidence/smoke/`, `FREEZE_VERDICT.md`) |
+| `CAN_WE_SCORE_VECTOR_VIA_NATIVE_EVAL` | PASS |
+| `CAN_WE_RUN_UPSTREAM_NATIVE_AAR` (full agent loop) | **NOT PASS** — BLOCKED; will not fake with POC-001-style loop |
+| Secrets in git tree | false (`evidence/repo_secret_absent.txt`) |
+| Deletion proof (`aar` import after remove) | fails as expected (`evidence/deletion_proof/`) |
+| Cursor used | false |
+| HUMAN | 0 |
+| Anthropic used | false (forbidden; no key) |
 
-## Claude hard-bind (why agent loop is BLOCKED)
+## Block reason
 
-Verified in-tree (evidence: `evidence/unpatched_failures/claude_hardbind_probe.txt`):
+`AutonomousAgentLoop` / `run.py agent` hard-require `ANTHROPIC_API_KEY` + `claude_agent_sdk.ClaudeSDKClient` + Claude model/CLI. User policy 2026-09-28: no Anthropic key; do not secret-request Anthropic; do not use A-company stack. No loop rewrite / provider swap.
 
-1. **`run.py:cmd_agent`** — exits if `ANTHROPIC_API_KEY` unset (`Error: ANTHROPIC_API_KEY is required for agent mode`).
-2. **`aar/research_loop/agent.py`** — imports `claude_agent_sdk` (`ClaudeSDKClient`, `ClaudeAgentOptions`); default model `claude-opus-4-8`.
-3. **`AutonomousAgentLoop._create_agent`** — `cli_path=shutil.which("claude")` (Claude CLI required on PATH).
+## Freeze pointers
 
-This environment: **no API key**, **`claude` CLI ABSENT**. Per policy we do **not** request keys or rewrite the loop to fake native. Agent ≥5-iter run is **not claimed**.
-
-UNPATCHED transcripts: `evidence/unpatched_failures/agent_local.txt` (key gate), `agent_local_with_fake_key.txt` (sdk missing before venv), `claude_hardbind_probe.txt`.
-
-## PASS (no-agent path)
-
-| Item | Evidence |
-|------|----------|
-| Task adapters (hillclimb/heldout/capability) | `adapter/benchmarks/*.py` |
-| VectorModel monkeypatch (process-start only) | `adapter/models_vector.py` |
-| Suite + briefing + env | `adapter/suite.yaml`, `briefing.md`, `env.example` |
-| Method template (fixture, not a loop) | `method_templates/vector_submit/` |
-| Secrets out-of-tree mode 700 | `/workspace/aar-infra/poc002_eval_secret/{train,heldout}.json` |
-| Eval smoke: near > mid; oob fails capability | `evidence/smoke/` (`SMOKE_OK`) |
-| Venv deps | `evidence/deps_install.log`; `/home/box/aar-poc-002-venv` |
-| Server import smoke (Flask + agent import) | `evidence/server_import_smoke.txt` |
-| Deletion proof | `evidence/deletion_proof/result.txt` |
-
-## Launch (eval only)
-
-```bash
-bash downstream/poc/aar_poc_002/scripts/eval_smoke.sh
-bash downstream/poc/aar_poc_002/scripts/deletion_proof.sh --exec
-```
-
-Do **not** run `launch_agent.sh` without an allowed non-A-company path; upstream loop is Claude-hard-bound.
+- `evidence/FREEZE_VERDICT.md`
+- `evidence/freeze_status.json`
+- Branch: `downstream/aar-poc-002-native`

@@ -1,1 +1,4 @@
 === RUNTIME fake key + venv 2026-09-28T01:53:51+08:00 ===
+
+=== NOTE ===
+Passed ANTHROPIC_API_KEY gate with fake key; entered ClaudeSDKClient path; hung; killed. Claude CLI ABSENT. UPSTREAM_NATIVE_UNPATCHED=BLOCKED.
