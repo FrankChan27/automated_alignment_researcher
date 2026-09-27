@@ -1,0 +1,7 @@
+{
+  "upstream_repo": "YuehHanChen/automated_alignment_researcher",
+  "upstream_default_branch": "main",
+  "pinned_upstream_sha": "02dbe9d2cadc553720d17cdf6259c0b8727e6cde",
+  "pinned_at": "2026-09-27T16:33:48Z",
+  "note": "PINNED_UPSTREAM_SHA only updates after a formal accepted upstream upgrade. Detection of a newer LATEST_UPSTREAM_SHA does not change this pin."
+}

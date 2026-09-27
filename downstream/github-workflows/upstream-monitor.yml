@@ -1,0 +1,57 @@
+# DOWNSTREAM-LOCAL: daily upstream monitor for FrankChan27 fork.
+# Does NOT auto-merge. Does NOT update PINNED_UPSTREAM_SHA.
+# Never echo secrets/tokens.
+name: upstream-monitor
+
+on:
+  schedule:
+    # UTC 20:20 = Beijing (UTC+8) 04:20 next calendar day
+    - cron: "20 20 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup git identity
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Ensure gh available
+        run: |
+          if ! command -v gh >/dev/null 2>&1; then
+            echo "gh missing on runner unexpectedly"
+            exit 1
+          fi
+          gh --version
+
+      - name: Add upstream remote
+        run: |
+          git remote remove upstream 2>/dev/null || true
+          git remote add upstream https://github.com/YuehHanChen/automated_alignment_researcher.git
+          git fetch --quiet upstream main
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Run monitor_once
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          DRY_RUN: "0"
+        run: |
+          chmod +x downstream/scripts/*.sh downstream/scripts/*.py
+          bash downstream/scripts/monitor_once.sh
