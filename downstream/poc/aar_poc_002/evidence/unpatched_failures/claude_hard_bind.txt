@@ -1,0 +1,99 @@
+=== HARD-BIND PROBE 2026-09-28T01:53:51+08:00 ===
+--- run.py cmd_agent key gate ---
+def cmd_agent(args, remaining):
+    """Launch autonomous research agent."""
+    import asyncio
+
+    if not os.getenv("ANTHROPIC_API_KEY"):
+        print("Error: ANTHROPIC_API_KEY is required for agent mode")
+        sys.exit(1)
+
+    local_mode = getattr(args, 'local', False)
+
+    if local_mode:
+        # Local mode: server runs on localhost, no S3, no findings sync
+        os.environ.setdefault("ORCHESTRATOR_API_URL", "http://localhost:8000")
+        os.environ["LOCAL_MODE"] = "true"
+        print("Local mode: using server at http://localhost:8000")
+        print("Make sure the server is running: python run.py server")
+
+    from aar.research_loop.agent import AutonomousAgentLoop
+
+    loop = AutonomousAgentLoop(
+        idea_uid=args.idea_uid,
+        idea_name=args.idea_name or "unknown",
+        max_runtime_seconds=args.max_runtime,
+        max_iterations=getattr(args, "max_iterations", None),
+        model=args.model,
+        local_mode=local_mode,
+    )
+--- agent.py imports / ClaudeSDKClient / model default ---
+/workspace/aar-infra/automated_alignment_researcher/aar/research_loop/agent.py:21:from claude_agent_sdk import (
+/workspace/aar-infra/automated_alignment_researcher/aar/research_loop/agent.py:22:    ClaudeSDKClient,
+/workspace/aar-infra/automated_alignment_researcher/aar/research_loop/agent.py:226:    """Wraps ClaudeSDKClient for research tasks."""
+/workspace/aar-infra/automated_alignment_researcher/aar/research_loop/agent.py:234:        model: str = os.getenv("AAR_AGENT_MODEL", "claude-opus-4-8"),
+/workspace/aar-infra/automated_alignment_researcher/aar/research_loop/agent.py:236:        cli_path: Optional[str] = None,
+/workspace/aar-infra/automated_alignment_researcher/aar/research_loop/agent.py:246:        self.cli_path = cli_path
+/workspace/aar-infra/automated_alignment_researcher/aar/research_loop/agent.py:309:            if self.cli_path:
+/workspace/aar-infra/automated_alignment_researcher/aar/research_loop/agent.py:310:                options_dict["cli_path"] = self.cli_path
+/workspace/aar-infra/automated_alignment_researcher/aar/research_loop/agent.py:314:            async with ClaudeSDKClient(options=options) as client:
+/workspace/aar-infra/automated_alignment_researcher/aar/research_loop/agent.py:398:        model: str = os.getenv("AAR_AGENT_MODEL", "claude-opus-4-8"),
+/workspace/aar-infra/automated_alignment_researcher/aar/research_loop/agent.py:480:            cli_path=shutil.which("claude"),
+/workspace/aar-infra/automated_alignment_researcher/run.py:33:    if not os.getenv("ANTHROPIC_API_KEY"):
+/workspace/aar-infra/automated_alignment_researcher/run.py:34:        print("Error: ANTHROPIC_API_KEY is required for agent mode")
+/workspace/aar-infra/automated_alignment_researcher/run.py:139:    agent_parser.add_argument("--model", default=os.getenv("AAR_AGENT_MODEL", "claude-opus-4-8"), help="Claude model")
+--- BaseAgent._execute_once options model ---
+                    error=str(e),
+                )
+
+    async def _execute_once(self, task: str, start_time: float) -> AgentResult:
+        """One attempt at running the session (no retry). Raises on API error so
+        execute() can decide whether to retry (529) or give up."""
+        iteration_count = 0
+        messages = []
+
+        if True:
+            options_dict = {
+                "allowed_tools": self.allowed_tools,
+                "system_prompt": self.system_prompt,
+                "permission_mode": self.permission_mode,
+                "cwd": str(self.workspace),
+                "model": self.model,
+                "mcp_servers": self.mcp_servers,
+                "setting_sources": ["project"],
+                "betas": ["context-1m-2025-08-07"],
+                # Extended thinking. Claude 4.x+ models (fable-5, opus-4.8) use ADAPTIVE thinking and
+                # default the thinking `display` to "omitted" -> the model thinks but the summary is
+                # withheld (empty ThinkingBlock.thinking, signature only -> empty [THINKING] in logs).
+                # Set display="summarized" to surface the reasoning summary the session-log callback
+                # persists. Manual `max_thinking_tokens` (=> thinking type "enabled"/budget_tokens) is
+                # REJECTED on these models — depth is controlled by `effort` instead (default "high";
+                # bump to xhigh/max via AAR_EFFORT).
+                "thinking": {"type": "adaptive", "display": "summarized"},
+                "effort": os.getenv("AAR_EFFORT", "max"),
+            }
+            if self.cli_path:
+                options_dict["cli_path"] = self.cli_path
+
+            options = ClaudeAgentOptions(**options_dict)
+
+            async with ClaudeSDKClient(options=options) as client:
+                await client.query(task)
+
+                async for message in client.receive_response():
+                    messages.append(message)
+
+                    # Log
+                    log_msg = self._format_message(message)
+                    if log_msg:
+                        print(log_msg)
+
+                    if self.message_callback:
+                        self.message_callback(message)
+
+                    if isinstance(message, ResultMessage):
+                        break
+
+--- which claude / ANTHROPIC ---
+claude CLI: ABSENT
+ANTHROPIC_API_KEY=UNSET

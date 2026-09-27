@@ -124,3 +124,7 @@ Installed 6 packages in 59ms
  + six==1.17.0
 Flask app OK <class 'flask.app.Flask'>
 agent OK
+
+=== symlink 2026-09-28T01:53:46+08:00 ===
+ln -sfn /home/box/aar-poc-002-venv /workspace/aar-infra/.venv-poc002
+lrwxrwxrwx 1 box box 26 Sep 28 01:51 /workspace/aar-infra/.venv-poc002 -> /home/box/aar-poc-002-venv

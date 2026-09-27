@@ -234,3 +234,5 @@ Prefer (1) for CAN_WE_RUN proof, then (2) if demonstrating monitor path matters.
    ```
 3. **Secret-request:** obtain real `ANTHROPIC_API_KEY` (and confirm Claude Agent SDK + `claude` CLI).
 4. Only if agent E2E blocked by hardcoded entrypoint: **minimal patch or spawn-script override** (document in `upstream_updates/` first) — do not rewrite the research loop.
+# Moved: see DESIGN.md for phase-2 lock; this file retains phase-1 scaffold narrative.
+
