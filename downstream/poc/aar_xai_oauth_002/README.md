@@ -1,5 +1,8 @@
 # AAR-xAI-OAuth-002
 
-PHASE0 install official Grok CLI → PHASE1 start real OAuth → **stop at HUMAN_GATE** for user consent.
+Phase 0 + Phase 1 only (until Human Gate). Continues from oauth-001 CASE D.
 
-See `HUMAN_GATE.md`, `STATUS.json`. No secrets in tree.
+**This shift stop:** `HUMAN_GATE=WAITING_FOR_USER_CONSENT`  
+Official `grok login --device-auth` started; consent **not** completed; PHASE 2–5 **not** started.
+
+See `PHASE0_BASE_REVERIFY.md`, `PHASE1_AUTH_STARTED.md`, `STATUS.json`.

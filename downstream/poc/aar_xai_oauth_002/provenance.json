@@ -1,0 +1,14 @@
+{
+  "poc": "AAR-xAI-OAuth-002",
+  "REPO": "/workspace/aar-infra/automated_alignment_researcher",
+  "BRANCH": "downstream/aar-xai-oauth-002",
+  "BASE_SHA": "c903de31eb7670bc1c855a031d392103eb32ac49",
+  "PRIOR_POC": "downstream/poc/aar_xai_oauth_001",
+  "PRIOR_FINAL_CASE": "D",
+  "OUTPUT_DIR": "downstream/poc/aar_xai_oauth_002",
+  "HUMAN_GATE": "WAITING_FOR_USER_CONSENT",
+  "AUTHORIZATION_STARTED": true,
+  "CONSENT_COMPLETED": false,
+  "SECRETS_IN_EVIDENCE": false,
+  "timestamp_utc8": "2026-09-28T02:14:07+0800"
+}
