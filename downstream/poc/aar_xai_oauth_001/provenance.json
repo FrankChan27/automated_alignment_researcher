@@ -1,0 +1,36 @@
+{
+  "poc": "AAR-xAI-OAuth-001",
+  "REPO": "/workspace/aar-infra/automated_alignment_researcher",
+  "BRANCH": "downstream/aar-xai-oauth-001",
+  "PARENT_SHA": "71842398db939801bafcfe98a66dbeb922a15297",
+  "BASE_SHA": "71842398db939801bafcfe98a66dbeb922a15297",
+  "OUTPUT_DIR": "downstream/poc/aar_xai_oauth_001",
+  "CAN_XAI_OAUTH_AUTHENTICATE_RESEARCHER_INFERENCE": "unknown",
+  "FINAL_CASE": "D",
+  "XAI_OAUTH_HUMAN_GATE": "REQUIRED",
+  "HUMAN": 0,
+  "TEST_0": {
+    "PUBLIC_API_OAUTH_DOCUMENTED": false,
+    "GROK_BUILD_OAUTH_DOCUMENTED": true,
+    "CLI_OAUTH_DOCUMENTED": true,
+    "MCP_OAUTH_DOCUMENTED": true,
+    "MCP_OAUTH_MEANING": "outbound_mcp_servers_only"
+  },
+  "TEST_1": {
+    "XAI_OAUTH_CREDENTIAL_PRESENT": false,
+    "CREDENTIAL_SOURCE": "none",
+    "CREDENTIAL_TYPE": "ABSENT",
+    "TOKEN_SCOPE_KNOWN": false,
+    "TOKEN_AUDIENCE_KNOWN": false,
+    "GROK_CLI_PRESENT": false,
+    "XAI_API_KEY_ENV": "ABSENT",
+    "MCP_XAI_SERVER_PRESENT": false,
+    "GROK_WEB_COOKIE_DOMAINS_PRESENT": true
+  },
+  "PHASE_2": "skipped_not_justified",
+  "INFERENCE_SMOKE": false,
+  "ADAPTER_IMPLEMENTED": false,
+  "SECRETS_IN_EVIDENCE": false,
+  "AAR_GENERIC_AAR_MODIFIED": false,
+  "timestamp_utc8": "2026-09-28T02:05:53+08:00"
+}

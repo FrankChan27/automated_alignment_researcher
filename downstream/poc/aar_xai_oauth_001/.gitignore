@@ -1,0 +1,7 @@
+# Never commit secrets
+**/*token*
+**/*secret*
+**/auth.json
+**/mcp_credentials.json
+**/.env
+**/credentials.json

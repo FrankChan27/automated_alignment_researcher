@@ -1,0 +1,36 @@
+=== date ===
+2026-09-28T02:03:12+08:00
+=== home ===
+HOME=/home/box
+=== CLI binaries (which/type) ===
+grok: ABSENT
+xai: ABSENT
+xai-cli: ABSENT
+grok-cli: ABSENT
+=== package managers hint ===
+npm global: no xai/grok
+=== config dir presence (names only) ===
+ABSENT: /home/box/.grok
+ABSENT: /home/box/.xai
+ABSENT: /home/box/.config/grok
+ABSENT: /home/box/.config/xai
+ABSENT: /home/box/.config/grok-oauth-mcp
+ABSENT: /home/box/.local/share/grok
+ABSENT: /home/box/.local/share/xai
+=== credential file presence (no content) ===
+ABSENT_FILE: /home/box/.grok/auth.json
+ABSENT_FILE: /home/box/.grok/mcp_credentials.json
+ABSENT_FILE: /home/box/.grok/config.toml
+ABSENT_FILE: /home/box/.config/grok-oauth-mcp/tokens.json
+=== env var NAMES only (presence) for XAI/GROK/OAUTH ===
+SPECIFIC_ENV_UNSET: XAI_API_KEY
+SPECIFIC_ENV_UNSET: GROK_API_KEY
+SPECIFIC_ENV_UNSET: XAI_OAUTH_TOKEN
+SPECIFIC_ENV_UNSET: GROK_OIDC_ISSUER
+SPECIFIC_ENV_UNSET: GROK_OIDC_CLIENT_ID
+SPECIFIC_ENV_UNSET: XAI_BASE_URL
+SPECIFIC_ENV_UNSET: GROK_AUTH_EXPIRED
+=== /etc/grok presence ===
+ABSENT: /etc/grok
+=== MCP servers available to this agent (names only) ===
+from GetMcpTools catalog: cursor-github, user-Slack (no xAI/Grok MCP server registered)

@@ -1,0 +1,6 @@
+Access date: 2026-09-28 (UTC+8)
+Method: GetMcpTools catalog (list tools / serverStatus only; no credential dump)
+Servers ready: cursor-github, user-Slack
+xAI / Grok inference MCP server registered on this agent: ABSENT
+Grok Bot X plugin as MCP auth surface for AAR researcher: NOT_RELEVANT
+Note: Do not conflate Grok Bot host identity with public API OAuth or ~/.grok/auth.json session.

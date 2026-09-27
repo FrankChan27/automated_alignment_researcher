@@ -1,0 +1,58 @@
+=== TEST 0: Local inventory 2026-09-28T02:04:44+08:00 ===
+
+## Env vars (PRESENT/ABSENT)
+XAI_API_KEY=ABSENT
+GROK_API_KEY=ABSENT
+XAI_API_KEY_ID=ABSENT
+GROK_API_BASE=ABSENT
+XAI_BASE_URL=ABSENT
+GROK_MODEL=ABSENT
+XAI_MODEL=ABSENT
+ANTHROPIC_API_KEY=ABSENT
+OPENAI_API_KEY=ABSENT
+
+## Env names matching XAI_|GROK_ (names only)
+XAI_GROK_env_count=0
+
+## ~/.grok/ paths
+DIR_~/.grok=ABSENT
+FILE_/home/box/.grok/auth.json=ABSENT
+FILE_/home/box/.grok/config.toml=ABSENT
+FILE_/home/box/.grok/credentials.json=ABSENT
+FILE_/home/box/.config/grok/auth.json=ABSENT
+
+## CLI checks
+grok_cli=ABSENT
+xai_bin=ABSENT
+npm=PRESENT
+npx=PRESENT
+pip=PRESENT
+python3=PRESENT
+=== TEST 0b: npm package probe 2026-09-28T02:04:48+08:00 ===
+name = '@xai-official/grok'
+version = '1.0.41'
+description = 'Bring Grok into your terminal'
+---
+npm ERR! code E404
+npm ERR! 404 Not Found - GET https://registry.npmjs.org/@xai-org%2fgrok - Not found
+npm ERR! 404 
+npm ERR! 404  '@xai-org/grok@*' is not in this registry.
+npm ERR! 404 
+npm ERR! 404 Note that you can also install from a
+npm ERR! 404 tarball, folder, http url, or git url.
+
+npm ERR! A complete log of this run can be found in:
+npm ERR!     /home/box/.npm/_logs/2026-09-27T18_04_49_757Z-debug-0.log
+npm_view_@xai-org/grok=FAIL
+---
+NAME                      | DESCRIPTION          | AUTHOR          | DATE       | VERSION  | KEYWORDS                                                  
+@monotykamary/pi-better-g | Improve Grok/xAI in… | =monotykamary   | 2026-09-21 | 0.3.6    | footer grok pi pi-extension pi-package supergrok usage xai
+rok                       |                      |                 |            |          |                                                           
+@nexus-catalyst/grok-plug | Nexus-Catalyst…      | =brian-nc       | 2026-08-30 | 0.1.2    | 
+in                        |                      |                 |            |          | 
+@ai-sdk/xai               | The **[xAI Grok…     | =vercel-releas… | 2026-09-25 | 5.0.10   | ai
+@j-o-r/hello-dave         | BETA - ESM toolkit…  | =j-o-r          | 2026-09-04 | 0.2.8    | 
+grok-mermaid              | Render Mermaid…      | =xl0            | 2026-08-11 | 0.2.3    | mermaid terminal tui ascii unicode diagram
+---
+xai-sdk (1.20.0)
+Available versions: 1.20.0, 1.19.0, 1.18.0, 1.17.0, 1.16.0, 1.15.0, 1.14.0, 1.12.2, 1.12.1, 1.12.0, 1.11.0, 1.10.0, 1.9.1, 1.9.0, 1.8.2, 1.8.1, 1.8.0, 1.7.0, 1.6.1, 1.6.0, 1.5.0, 1.4.1, 1.4.0, 1.3.1, 1.3.0, 1.2.0, 1.1.0, 1.0.1, 1.0.0

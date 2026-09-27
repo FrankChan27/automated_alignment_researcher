@@ -1,0 +1,8 @@
+Access date: 2026-09-28 (UTC+8)
+Source: /home/box/agent-data/chrome-cookie-seed.json (domain counts only; values not read into evidence beyond counts)
+Relevant domain counts:
+  .grok.com: PRESENT (count=10)
+  grok.com: PRESENT (count=2)
+  *.x.ai: ABSENT in seed
+Interpretation: Web cookie presence ≠ Grok CLI OAuth (~/.grok/auth.json) ≠ public API key.
+Per mission rules: do not automate login; do not use cookies as researcher inference credentials; do not conflate Grok account web session with public API OAuth.

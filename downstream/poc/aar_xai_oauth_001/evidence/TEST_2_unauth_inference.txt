@@ -1,0 +1,88 @@
+=== TEST 2: Unauthenticated inference negative control 2026-09-28T02:05:47+08:00 ===
+
+=== api.x.ai_responses ===
+URL=https://api.x.ai/v1/responses
+HTTP_STATUS=401
+RESPONSE_HEADERS_SAFE:
+HTTP/2 401 
+date: Sun, 27 Sep 2026 18:05:47 GMT
+content-type: application/json
+content-length: 77
+strict-transport-security: max-age=31536000
+vary: origin, access-control-request-method, access-control-request-headers
+access-control-allow-origin: *
+access-control-expose-headers: *
+cf-cache-status: DYNAMIC
+set-cookie: REDACTED
+server: cloudflare
+cf-ray: a41c7045ed3696ba-PDX
+
+BODY_SAFE:
+{"code":"unauthenticated:no-credentials","error":"No credentials presented."}
+FIELD:code
+FIELD:error
+
+=== api.x.ai_chat_completions ===
+URL=https://api.x.ai/v1/chat/completions
+HTTP_STATUS=401
+RESPONSE_HEADERS_SAFE:
+HTTP/2 401 
+date: Sun, 27 Sep 2026 18:05:48 GMT
+content-type: application/json
+content-length: 77
+strict-transport-security: max-age=31536000
+vary: origin, access-control-request-method, access-control-request-headers
+access-control-allow-origin: *
+access-control-expose-headers: *
+cf-cache-status: DYNAMIC
+set-cookie: REDACTED
+server: cloudflare
+cf-ray: a41c7046ef1596ba-PDX
+
+BODY_SAFE:
+{"code":"unauthenticated:no-credentials","error":"No credentials presented."}
+FIELD:code
+FIELD:error
+
+=== cli-chat-proxy_chat ===
+URL=https://cli-chat-proxy.grok.com/v1/chat/completions
+HTTP_STATUS=401
+RESPONSE_HEADERS_SAFE:
+HTTP/2 401 
+date: Sun, 27 Sep 2026 18:05:48 GMT
+content-type: application/json
+content-length: 132
+www-authenticate: Bearer error="invalid_token", error_description="Invalid or expired credentials (auth_kind=none, x_xai_token_auth=none, upstream=Unauthenticated, reason=no auth context)"
+vary: origin, access-control-request-method, access-control-request-headers
+strict-transport-security: max-age=31536000; includeSubDomains
+set-cookie: REDACTED
+cf-cache-status: DYNAMIC
+server: cloudflare
+cf-ray: a41c7048199896ba-PDX
+alt-svc: h3=":443"; ma=86400
+
+BODY_SAFE:
+{"error":"Invalid or expired credentials (auth_kind=none, x_xai_token_auth=none, upstream=Unauthenticated, reason=no auth context)"}
+FIELD:error
+
+=== cli-chat-proxy_responses ===
+URL=https://cli-chat-proxy.grok.com/v1/responses
+HTTP_STATUS=401
+RESPONSE_HEADERS_SAFE:
+HTTP/2 401 
+date: Sun, 27 Sep 2026 18:05:48 GMT
+content-type: application/json
+content-length: 132
+www-authenticate: Bearer error="invalid_token", error_description="Invalid or expired credentials (auth_kind=none, x_xai_token_auth=none, upstream=Unauthenticated, reason=no auth context)"
+vary: origin, access-control-request-method, access-control-request-headers
+strict-transport-security: max-age=31536000; includeSubDomains
+set-cookie: REDACTED
+cf-cache-status: DYNAMIC
+server: cloudflare
+cf-ray: a41c7048fb5a96ba-PDX
+alt-svc: h3=":443"; ma=86400
+
+BODY_SAFE:
+{"error":"Invalid or expired credentials (auth_kind=none, x_xai_token_auth=none, upstream=Unauthenticated, reason=no auth context)"}
+FIELD:error
+

@@ -1,0 +1,42 @@
+=== TEST 1: Public discovery 2026-09-28T02:05:27+08:00 ===
+
+## OIDC https://auth.x.ai/.well-known/openid-configuration
+HTTP_STATUS=200
+TOP_KEYS= ['authorization_endpoint', 'claims_supported', 'code_challenge_methods_supported', 'device_authorization_endpoint', 'grant_types_supported', 'id_token_signing_alg_values_supported', 'issuer', 'jwks_uri', 'request_parameter_supported', 'request_uri_parameter_supported', 'response_types_supported', 'revocation_endpoint', 'scopes_supported', 'subject_types_supported', 'token_endpoint', 'token_endpoint_auth_methods_supported', 'userinfo_endpoint']
+META:issuer='https://auth.x.ai'
+META:authorization_endpoint='https://auth.x.ai/oauth2/authorize'
+META:token_endpoint='https://auth.x.ai/oauth2/token'
+META:device_authorization_endpoint='https://auth.x.ai/oauth2/device/code'
+META:userinfo_endpoint='https://auth.x.ai/oauth2/userinfo'
+META:jwks_uri='https://auth.x.ai/.well-known/jwks.json'
+META:revocation_endpoint='https://auth.x.ai/oauth2/revoke'
+META:grant_types_supported=['authorization_code', 'refresh_token', 'urn:ietf:params:oauth:grant-type:device_code']
+META:response_types_supported=['code']
+META:scopes_supported=['openid', 'profile', 'email', 'offline_access', 'grok-cli:access', 'grok-workspace:serve', 'team:read', 'teams:read', 'teams:write', 'org:read', 'orgs:read', 'orgs:write', 'api:access', 'grok-plugins:access', 'conversations:read', 'conversations:write', 'workspaces:read', 'workspaces:write', 'api-keys:read', 'api-keys:write', 'logs:read', 'billing:read', 'billing:write']
+META:code_challenge_methods_supported=['S256']
+META:token_endpoint_auth_methods_supported=['client_secret_basic', 'client_secret_post', 'none']
+META:id_token_signing_alg_values_supported=['ES256']
+META:subject_types_supported=['public']
+META:claims_supported=['sub', 'iss', 'aud', 'exp', 'iat', 'name', 'given_name', 'family_name', 'email', 'email_verified', 'picture']
+
+## Other OIDC probes
+accounts.x.ai/.well-known/openid-configuration HTTP=404
+api.x.ai/.well-known/openid-configuration HTTP=404
+
+## Inference endpoint unauth GETs
+api.x.ai/v1/models HTTP=401 BODY_CODE=unauthenticated:no-credentials
+cli-chat-proxy.grok.com/v1/models HTTP=401
+WWW-Authenticate mentions: Bearer; auth_kind; x_xai_token_auth header name observed
+BODY_ERROR_FIELD_NAMES: error
+
+## Docs page statuses (curl -L)
+https://docs.x.ai/ HTTP=200
+https://docs.x.ai/docs/introduction HTTP=200
+https://docs.x.ai/docs/authentication HTTP=404
+https://docs.x.ai/docs/guides/authentication HTTP=404
+https://console.x.ai/ HTTP=200
+https://cli-chat-proxy.grok.com/ HTTP=404
+
+## Notes
+Official docs homepage Quick Start shows Authorization: Bearer $XAI_API_KEY against https://api.x.ai/v1
+OIDC discovery confirms device_code grant + scopes including api:access and grok-cli:access

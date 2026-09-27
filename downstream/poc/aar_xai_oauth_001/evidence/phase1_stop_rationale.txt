@@ -1,0 +1,12 @@
+Phase 1 complete 2026-09-28 (UTC+8).
+
+Justification to STOP before Phase 2:
+1. No ~/.grok/auth.json or other OAuth session on box.
+2. No XAI_API_KEY (and mission forbids creating/buying keys).
+3. grok CLI not installed; cannot use official CLI session path without install+login.
+4. Official public API path is API-key Bearer — not documented OAuth for third-party researcher.
+5. Obtaining a Grok Build OAuth session requires `grok login` browser or device-code human consent.
+6. Mission: HUMAN=0; if OAuth consent browser required → XAI_OAUTH_HUMAN_GATE=REQUIRED and STOP (CASE D).
+7. Do not automate login; do not use grok.com web cookies as API credentials; do not reverse-engineer private protocols to claim public API OAuth support.
+
+Phase 2 TEST 2–5 not justified.
