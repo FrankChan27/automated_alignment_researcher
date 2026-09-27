@@ -1,0 +1,100 @@
+{
+  "verdict": "PASS",
+  "criterion": "AAR_MINIMAL_LOOP",
+  "experiment": "AAR-POC-001",
+  "reviewer_agent": "AAR-POC-001审阅",
+  "reviewer_id": "86a2edac-3400-4cb7-8bb3-825729dc327c",
+  "reviewed_at": "2026-09-28T01:28:17+08:00",
+  "canonical_run": "/workspace/aar-infra/automated_alignment_researcher/downstream/poc/aar_poc_001/runs/AAR-POC-001-frozen-25",
+  "evidence_mirror": "/workspace/aar-infra/automated_alignment_researcher/downstream/poc/aar_poc_001/evidence",
+  "freeze_marker": "FROZEN @ 2026-09-28T01:26:52+08:00",
+  "ignored": [
+    "Any unfrozen 45-iter verbal claim; adjudication uses only AAR-POC-001-frozen-25"
+  ],
+  "checks": {
+    "iterations_ge_20": {
+      "pass": true,
+      "iterations_in_trajectory": 25,
+      "ok_iterations": 24,
+      "failed_iterations": [
+        2
+      ],
+      "state_iteration": 25
+    },
+    "closed_loop_real": {
+      "pass": true,
+      "evidence": [
+        "harness/run_loop.py: researcher subprocess (no AAR_POC_SECRET_PATH) then evaluator subprocess (secret env set) then state.json persist then next iter",
+        "25 submission dirs + 25 score files; trajectory↔scores cross-check: 0 mismatches",
+        "state.history length 24 (ok only); trajectory.jsonl length 25 including recoverable fail"
+      ]
+    },
+    "score_improvement_or_honest_flat": {
+      "pass": true,
+      "first_train_score": -22330.1,
+      "best_train_score": -159.5,
+      "best_iteration": 23,
+      "improved": true,
+      "first_improvement_iteration": 3
+    },
+    "heldout_once_unexposed": {
+      "pass": true,
+      "heldout_files": 1,
+      "heldout_score": 2938.3999999999996,
+      "heldout_in_state": false,
+      "heldout_score_in_train_scores": false,
+      "heldout_role_in_train_score_files": false,
+      "note": "Held-out runs only after train loop in harness; single heldout/result.json"
+    },
+    "downstream_only_aar_untouched": {
+      "pass": true,
+      "commit": "cab5af06c1146e54b2a23ee55b6ec9e8e60d8a8f",
+      "branch": "downstream/aar-poc-001",
+      "aar_or_generic_aar_in_commit": false,
+      "git_diff_aar_generic_vs_HEAD": "empty",
+      "git_diff_aar_generic_vs_upstream_pin": "empty"
+    },
+    "failure_recovery_recorded": {
+      "pass": true,
+      "iter_2": "OOB vector[0]=150 rejected by evaluator; strategy=inject_oob_failure; recovered=True; loop continued"
+    }
+  },
+  "attacks": [
+    {
+      "attack": "Fabricated trajectory (scores not backed by artifacts)",
+      "result": "REJECTED",
+      "detail": "Each iter has submissions/iter_XXX/artifact.json and scores/iter_XXX.json; scores match trajectory; evidence/ sha256 mirrors frozen run"
+    },
+    {
+      "attack": "Held-out leaked into researcher state/history during training",
+      "result": "REJECTED",
+      "detail": "state.json has no heldout fields/score; no train score equals heldout 2938.4; only one heldout result file"
+    },
+    {
+      "attack": "aar/ or generic_aar/ modified to pass PoC",
+      "result": "REJECTED",
+      "detail": "cab5af0 touches only downstream/poc/aar_poc_001/*; diffs vs HEAD and vs pin 02dbe9d empty for aar/ and generic_aar/"
+    },
+    {
+      "attack": "Iteration count padded / <20 real evals",
+      "result": "REJECTED",
+      "detail": "trajectory iterations 1..25 contiguous; 24 ok + 1 recoverable fail"
+    },
+    {
+      "attack": "OOB failure is fake / not exercised",
+      "result": "NOTED_NOT_FAIL",
+      "detail": "Failure is intentionally injected (SPEC + strategy inject_oob_failure) but evaluator truly rejected and harness recovered; disclosed, not hidden"
+    },
+    {
+      "attack": "report.json score_trajectory omits failed iter 2",
+      "result": "NOTED_NOT_FAIL",
+      "detail": "report history lists only ok iters; failures[] and trajectory.jsonl retain iter 2; not evidence fabrication"
+    },
+    {
+      "attack": "eval_secret committed in git weakens isolation narrative",
+      "result": "NOTED_NOT_FAIL",
+      "detail": "Runtime isolation (subprocess env + researcher never reading secrets) still holds; repo hygiene caveat only; AAR_MINIMAL_LOOP criteria still met"
+    }
+  ],
+  "summary": "AAR_MINIMAL_LOOP=PASS. Frozen 25-iter run shows real Researcher→artifact→isolated TRAIN eval→score→persistent state→next loop, clear score improvement (-22330.1→-159.5 at iter 23), single post-loop held-out (2938.4) unexposed during training, and aar/generic_aar untouched."
+}
