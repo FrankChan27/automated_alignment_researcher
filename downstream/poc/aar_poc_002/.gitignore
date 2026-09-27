@@ -1,0 +1,4 @@
+# local scratch only — secrets live outside the repo
+*.secret
+.env
+__pycache__/

@@ -1,0 +1,140 @@
+=== ENV PROBE 2026-09-28T01:48:18+08:00 ===
+pwd=/workspace/aar-infra/automated_alignment_researcher
+python=/usr/local/bin/python; Python 3.13.5
+python3=/usr/bin/python3; Python 3.13.5
+uv=/usr/local/bin/uv; uv 0.12.19 (x86_64-unknown-linux-gnu)
+ANTHROPIC_API_KEY=absent
+VIRTUAL_ENV=<unset>
+--- package checks (python) ---
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+    import claude_agent_sdk; print('claude_agent_sdk', getattr(claude_agent_sdk,'__version__', 'ok'), getattr(claude_agent_sdk,'__file__','?'))
+    ^^^^^^^^^^^^^^^^^^^^^^^
+ModuleNotFoundError: No module named 'claude_agent_sdk'
+FAIL import claude_agent_sdk
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+    import anthropic; print('anthropic', getattr(anthropic,'__version__', 'ok'), getattr(anthropic,'__file__','?'))
+    ^^^^^^^^^^^^^^^^
+ModuleNotFoundError: No module named 'anthropic'
+FAIL import anthropic
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+    import fastapi; print('fastapi', getattr(fastapi,'__version__', 'ok'), getattr(fastapi,'__file__','?'))
+    ^^^^^^^^^^^^^^
+ModuleNotFoundError: No module named 'fastapi'
+FAIL import fastapi
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+    import uvicorn; print('uvicorn', getattr(uvicorn,'__version__', 'ok'), getattr(uvicorn,'__file__','?'))
+    ^^^^^^^^^^^^^^
+ModuleNotFoundError: No module named 'uvicorn'
+FAIL import uvicorn
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+    import flask; print('flask', getattr(flask,'__version__', 'ok'), getattr(flask,'__file__','?'))
+    ^^^^^^^^^^^^
+ModuleNotFoundError: No module named 'flask'
+FAIL import flask
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+    import yaml; print('yaml', getattr(yaml,'__version__', 'ok'), getattr(yaml,'__file__','?'))
+    ^^^^^^^^^^^
+ModuleNotFoundError: No module named 'yaml'
+FAIL import yaml
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+    import jinja2; print('jinja2', getattr(jinja2,'__version__', 'ok'), getattr(jinja2,'__file__','?'))
+    ^^^^^^^^^^^^^
+ModuleNotFoundError: No module named 'jinja2'
+FAIL import jinja2
+--- package checks (python3) ---
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+    import claude_agent_sdk; print('claude_agent_sdk', getattr(claude_agent_sdk,'__version__', 'ok'), getattr(claude_agent_sdk,'__file__','?'))
+    ^^^^^^^^^^^^^^^^^^^^^^^
+ModuleNotFoundError: No module named 'claude_agent_sdk'
+FAIL import claude_agent_sdk
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+    import anthropic; print('anthropic', getattr(anthropic,'__version__', 'ok'), getattr(anthropic,'__file__','?'))
+    ^^^^^^^^^^^^^^^^
+ModuleNotFoundError: No module named 'anthropic'
+FAIL import anthropic
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+    import fastapi; print('fastapi', getattr(fastapi,'__version__', 'ok'), getattr(fastapi,'__file__','?'))
+    ^^^^^^^^^^^^^^
+ModuleNotFoundError: No module named 'fastapi'
+FAIL import fastapi
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+    import uvicorn; print('uvicorn', getattr(uvicorn,'__version__', 'ok'), getattr(uvicorn,'__file__','?'))
+    ^^^^^^^^^^^^^^
+ModuleNotFoundError: No module named 'uvicorn'
+FAIL import uvicorn
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+    import flask; print('flask', getattr(flask,'__version__', 'ok'), getattr(flask,'__file__','?'))
+    ^^^^^^^^^^^^
+ModuleNotFoundError: No module named 'flask'
+FAIL import flask
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+    import yaml; print('yaml', getattr(yaml,'__version__', 'ok'), getattr(yaml,'__file__','?'))
+    ^^^^^^^^^^^
+ModuleNotFoundError: No module named 'yaml'
+FAIL import yaml
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+    import jinja2; print('jinja2', getattr(jinja2,'__version__', 'ok'), getattr(jinja2,'__file__','?'))
+    ^^^^^^^^^^^^^
+ModuleNotFoundError: No module named 'jinja2'
+FAIL import jinja2
+--- venv / uv project ---
+ls: cannot access '.venv': No such file or directory
+ls: cannot access '/workspace/aar-infra/.venv': No such file or directory
+--- aar import ---
+aar /workspace/aar-infra/automated_alignment_researcher/aar/__init__.py
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+    from aar.research_loop.agent import AutonomousAgentLoop; print('agent ok')
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/aar-infra/automated_alignment_researcher/aar/research_loop/agent.py", line 21, in <module>
+    from claude_agent_sdk import (
+    ...<6 lines>...
+    )
+ModuleNotFoundError: No module named 'claude_agent_sdk'
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+    from aar.eval_pod.run_eval import run; print('run_eval ok')
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/aar-infra/automated_alignment_researcher/aar/eval_pod/run_eval.py", line 19, in <module>
+    import yaml
+ModuleNotFoundError: No module named 'yaml'
+=== server deps in poc venv ===
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+    import flask
+ModuleNotFoundError: No module named 'flask'
+flask: missing
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+    import fastapi
+ModuleNotFoundError: No module named 'fastapi'
+fastapi: missing
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+    import uvicorn
+ModuleNotFoundError: No module named 'uvicorn'
+uvicorn: missing
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+    import anthropic
+ModuleNotFoundError: No module named 'anthropic'
+anthropic: missing
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+    import claude_agent_sdk
+ModuleNotFoundError: No module named 'claude_agent_sdk'
+claude_agent_sdk: missing

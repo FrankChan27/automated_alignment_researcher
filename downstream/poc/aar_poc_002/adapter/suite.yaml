@@ -1,0 +1,22 @@
+# POC-002 draft suite — baselines are placeholders until measured.
+# Roles follow generic_aar/suite.yaml conventions.
+suite: poc002_vector
+target_model: vector_stub
+
+benchmarks:
+  - name: poc002_hillclimb
+    category: rule
+    role: safety
+    baseline: 0.0
+    optimum: 1.0
+
+  - name: poc002_heldout
+    category: rule
+    role: held_out
+    baseline: 0.0
+    optimum: 1.0
+
+  - name: poc002_capability
+    category: rule
+    role: capability_filter
+    floor: 1.0
