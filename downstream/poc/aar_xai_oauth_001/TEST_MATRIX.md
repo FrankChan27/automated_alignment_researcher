@@ -7,6 +7,7 @@ Date: 2026-09-28 (UTC+8)
 | **0** | Docs flags | DONE | AUTH_SURFACE_MAP.md, OFFICIAL_SOURCE_MAP.md | PUBLIC_API_OAUTH_DOCUMENTED=false; GROK_BUILD_OAUTH_DOCUMENTED=true; CLI_OAUTH_DOCUMENTED=true; MCP_OAUTH_DOCUMENTED=true (outbound MCP only) |
 | **1** | Local credential + MCP discovery (metadata only) | DONE | evidence/test1_local_discovery.txt, evidence/TEST_0_inventory.txt, evidence/test1_mcp_status.txt, evidence/test1_browser_cookie_domains_meta.txt | XAI_OAUTH_CREDENTIAL_PRESENT=false; grok CLI ABSENT; MCP xAI ABSENT; grok.com cookie domains PRESENT (not usable as API/CLI OAuth) |
 | **1b** | Public discovery / unauth probes | DONE | evidence/TEST_1_public_discovery.txt, evidence/auth_x_ai_openid_configuration.json | OIDC 200; api.x.ai/v1/models → 401 unauthenticated; cli-chat-proxy/v1/models → 401 |
+| **2-neg** | Unauth inference negative control (no creds) | DONE | evidence/TEST_2_unauth_inference.txt | api.x.ai + cli-chat-proxy → 401; cookies redacted |
 | **2** | Authenticated account/models metadata | **SKIPPED** | — | Not justified: no OAuth session / API key; would require human OAuth → CASE D |
 | **3** | Token scope/audience metadata (safe) | **SKIPPED** | — | No token present; TOKEN_SCOPE_KNOWN=false; TOKEN_AUDIENCE_KNOWN=false |
 | **4** | Authenticated lightweight API (non-inference) | **SKIPPED** | — | Same gate |
