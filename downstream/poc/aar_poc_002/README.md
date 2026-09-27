@@ -1,17 +1,30 @@
 # AAR-POC-002 — Native upstream AAR (submit-model) proof
 
-Downstream-only scaffolding to prove **CAN_WE_RUN_UPSTREAM_NATIVE_AAR**.
+Downstream-only adapters to prove **CAN_WE_RUN_UPSTREAM_NATIVE_AAR**.
 
-- **Does use:** official `AutonomousAgentLoop` + MCP `evaluate_model` + `aar.eval_pod.run_eval` / `generic_aar` extension surface.
-- **Does not:** copy `aar_poc_001` run_loop/proposer; does not rewrite `aar/` or `generic_aar/` in phase 1.
+| Path | Purpose |
+|------|---------|
+| `execution_path.md` | Cited native hops |
+| `blocker_probe.md` | Env / deps / server / CLI blockers |
+| `design.md` | Adapter design |
+| `briefing.md` | Agent-facing task brief (no secrets) |
+| `env.example` | Launch env (paths only) |
+| `adapter/` | Suite + VectorModel shim + benches + `eval.py` |
+| `scripts/` | `env.sh`, `run_eval.sh`, smoke / server wrappers |
+| `method_templates/vector_submit/` | Idea `run.py` template (not a research loop) |
+| `evidence/` | Install / smoke / secret-absent / server transcripts |
 
-| Doc | Purpose |
-|-----|---------|
-| `execution_path.md` | Cited ENTRYPOINT→…→NEXT ITERATION hops |
-| `blocker_probe.md` | Env probe + unpatched failure transcripts |
-| `design.md` | 8-d `[0,100]` vector adapter on suite YAML + submit-model |
-| `evidence/` | Raw smoke / failure logs |
-| `adapter/` | Phase-2 package skeleton (no research loop) |
+**Secrets (never in git):** `/home/box/aar-poc-002-secrets/` mode 0700 (`train.json`, `heldout.json`)  
+**Runtime:** `/home/box/aar-poc-002-runs/`  
+**Venv:** `/home/box/aar-poc-002-venv`
 
-Secrets: `/home/box/aar-poc-002-secrets/` (mode 0700, outside git).  
-Smoke venv: `/home/box/aar-poc-002-venv` (PyYAML for stub eval).
+### Quick smoke (no Anthropic)
+
+```bash
+source /home/box/aar-poc-002-venv/bin/activate
+bash downstream/poc/aar_poc_002/scripts/run_eval.sh \
+  downstream/poc/aar_poc_002/adapter/fixtures/example_vector_dir \
+  /home/box/aar-poc-002-runs/research_scores/out.json
+```
+
+Research scores strip held-out; full scores land only under `$HELDOUT_SCORES_DIR`.

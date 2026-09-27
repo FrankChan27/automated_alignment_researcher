@@ -27,3 +27,4 @@ data/
 # DOWNSTREAM-LOCAL artifacts (never commit secrets; manifests under upstream_updates/ are OK)
 downstream/artifacts/
 !downstream/artifacts/.gitkeep
+**/experiments.db

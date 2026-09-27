@@ -1,0 +1,4 @@
+near_hillclimb smoke also PASS locally (HEADLINE ~99%, passes_filter=True, STRIP_PROOF=PASS).
+Candidate vector and held_out_pct numerics intentionally omitted from git evidence to avoid
+secret-adjacent leakage. Full private scores remain under /home/box/aar-poc-002-secrets/heldout_scores/
+(mode 700); research-readable under /home/box/aar-poc-002-runs/research_scores/.

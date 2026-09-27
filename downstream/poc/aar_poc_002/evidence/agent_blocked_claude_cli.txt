@@ -1,0 +1,6 @@
+=== venv agent with fake key — claude CLI check 2026-09-28T01:53:16+08:00 ===
+claude_which= None
+key_set= True
+AutonomousAgentLoop import OK
+mentions_claude_cli= True
+BLOCKED_ON: ANTHROPIC_API_KEY (real) + claude CLI ABSENT — not running >=5 iterations

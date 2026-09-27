@@ -1,0 +1,2 @@
+import_aar_exit=1
+DELETION_PROOF_OK: aar import failed as expected → supports UPSTREAM_NATIVE_AAR

@@ -1,0 +1,37 @@
+
+[Startup] Ensuring baseline ideas exist in DB...
+[Startup] Baseline ideas: created=4, updated=0
+
+[Startup] Syncing baseline results to Finding table...
+Traceback (most recent call last):
+  File "/workspace/aar-infra/automated_alignment_researcher/aar/web_ui/backend/app.py", line 2295, in <module>
+    sync_baseline_experiments()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/workspace/aar-infra/automated_alignment_researcher/aar/web_ui/backend/app.py", line 1354, in sync_baseline_experiments
+    from aar.utils.hierarchical_cache import HierarchicalCache, compute_hyperparam_config_key
+ModuleNotFoundError: No module named 'aar.utils.hierarchical_cache'
+Starting server on port 8765...
+BOOT_OK=false (process exited early)
+--- server_boot.txt ---
+
+[Startup] Ensuring baseline ideas exist in DB...
+[Startup] Baseline ideas: created=4, updated=0
+
+[Startup] Syncing baseline results to Finding table...
+Traceback (most recent call last):
+  File "/workspace/aar-infra/automated_alignment_researcher/aar/web_ui/backend/app.py", line 2295, in <module>
+    sync_baseline_experiments()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/workspace/aar-infra/automated_alignment_researcher/aar/web_ui/backend/app.py", line 1354, in sync_baseline_experiments
+    from aar.utils.hierarchical_cache import HierarchicalCache, compute_hyperparam_config_key
+ModuleNotFoundError: No module named 'aar.utils.hierarchical_cache'
+Starting server on port 8765...
+BOOT_OK=false (process exited early)
+--- server_boot.txt ---
+
+=== blocker classification ===
+ModuleNotFoundError: aar.utils.hierarchical_cache
+File exists? NO
+Called from: aar/web_ui/backend/app.py:sync_baseline_experiments (startup)
+Action: STOP — do not silently patch aar/. Document for phase 3 / upstream.
+Flask app object imports OK; crash is at app.py __main__ startup sync, not missing flask deps.

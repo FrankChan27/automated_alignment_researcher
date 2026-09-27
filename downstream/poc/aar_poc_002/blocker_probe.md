@@ -135,3 +135,59 @@ Proves: `generic_aar.eval:main` → `aar.eval_pod.run_eval.run` + registry/compo
 ```
 
 Not under the repo. Placeholder README only (no targets committed).
+
+---
+
+## Phase 2 update (2026-09-28T01:52+08)
+
+### Deps install (`/home/box/aar-poc-002-venv`)
+
+Installed (no torch): PyYAML, jinja2, flask, flask-cors, flask-sqlalchemy, requests, httpx, anthropic, **claude-agent-sdk (PyPI `claude-agent-sdk==0.2.160`)**, python-dotenv, boto3 (+ transitive).
+
+Log: `evidence/deps_install.log`
+
+Import status after install:
+- `from aar.research_loop.agent import AutonomousAgentLoop` → **OK**
+- `from aar.web_ui.backend.app import app` → **OK** (Flask app object)
+- `claude` CLI (`shutil.which("claude")`) → **ABSENT**
+
+### `claude_agent_sdk` / CLI blocker (do not fake)
+
+- Package **is** on PyPI and installs cleanly as `claude-agent-sdk`.
+- Upstream `BaseAgent` sets `cli_path=shutil.which("claude")`. Without the Claude Code CLI binary on `PATH`, live agent sessions will fail even with `ANTHROPIC_API_KEY` + the Python SDK.
+- Phase 3 must install/provide the `claude` CLI (or confirm SDK can run without it for this harness version) — **not faked here**.
+
+### Server boot (`python run.py server`)
+
+**BOOT_OK=false**
+
+Transcript: `evidence/server_boot.txt`
+
+After deps, Flask starts baseline-idea seeding then crashes in `__main__`:
+
+```text
+File "aar/web_ui/backend/app.py", line 2295, in <module>
+  sync_baseline_experiments()
+File "aar/web_ui/backend/app.py", line 1354, in sync_baseline_experiments
+  from aar.utils.hierarchical_cache import HierarchicalCache, compute_hyperparam_config_key
+ModuleNotFoundError: No module named 'aar.utils.hierarchical_cache'
+```
+
+**Proven gap:** `aar/utils/` contains only `logging_utils.py` — `hierarchical_cache` is **missing from the pinned tree**. This is an upstream/tree defect, not a missing pip package.
+
+**Action taken:** STOP. Did **not** patch `aar/`. Documented for phase 3 / upstream recovery. Downstream cannot honestly claim full server boot until this module exists or startup is made optional upstream.
+
+### Adapter smoke (no Anthropic)
+
+`bash downstream/poc/aar_poc_002/scripts/smoke_vector_eval.sh` + fixture eval:
+
+- Research scores strip held-out: **PASS** (`evidence/vector_eval_smoke.txt`)
+- Full scores only under `/home/box/aar-poc-002-secrets/heldout_scores/` (mode 700)
+- `REPO_SECRET_PRESENT=false` (`evidence/repo_secret_absent.txt`)
+
+### Remaining blockers for official agent loop
+
+1. Real `ANTHROPIC_API_KEY` (parent requesting separately).
+2. `claude` CLI absent on PATH.
+3. Server `__main__` requires missing `aar.utils.hierarchical_cache` (upstream defect — do not silent-patch).
+4. Optional: `MONITOR_REQUIRED` policy for vector toy; eval spawn must use `adapter.eval` (or equivalent) so benches register.

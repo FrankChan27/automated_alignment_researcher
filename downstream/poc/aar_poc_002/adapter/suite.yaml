@@ -1,5 +1,6 @@
-# POC-002 draft suite — baselines are placeholders until measured.
-# Roles follow generic_aar/suite.yaml conventions.
+# POC-002 vector suite — roles follow generic_aar conventions.
+# baseline = measured mid-vector [50]*8 normalized score (updated after smoke).
+# optimum  = 1.0 (perfect match → normalized raw/base = 1.0).
 suite: poc002_vector
 target_model: vector_stub
 
@@ -7,13 +8,13 @@ benchmarks:
   - name: poc002_hillclimb
     category: rule
     role: safety
-    baseline: 0.0
+    baseline: 0.37
     optimum: 1.0
 
   - name: poc002_heldout
     category: rule
     role: held_out
-    baseline: 0.0
+    baseline: 0.13
     optimum: 1.0
 
   - name: poc002_capability

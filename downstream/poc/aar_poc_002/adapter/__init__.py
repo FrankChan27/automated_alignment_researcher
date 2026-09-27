@@ -1,5 +1,4 @@
-"""AAR-POC-002 downstream adapter package (suite + vector model loader + benches).
+"""POC-002 adapter: VectorModel loader shim + suite benchmarks + eval entry."""
+from .models_vector import VectorModel, install_vector_loader, looks_like_vector_dir
 
-Phase 1: scaffold only. Phase 2 implements VectorModel, suite YAML, and eval.py
-that registers benches then calls aar.eval_pod.run_eval.run — not a substitute agent loop.
-"""
+__all__ = ["VectorModel", "install_vector_loader", "looks_like_vector_dir"]

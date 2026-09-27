@@ -6,6 +6,7 @@
 **Pinned upstream:** `02dbe9d` (merge-base = self)  
 **Mapped at:** 2026-09-28 (UTC+8)  
 **Rule:** every hop cites a real file/function/command verified in this tree. No POC-001 `proposer`/`run_loop` on this path.
+**Verified/corrected:** 2026-09-28 ~01:50 UTC+8 (executor) — Flask not uvicorn; EVAL_VIA_WORKER poll-only; BaseAgent.execute/_execute_once NEXT-ITER detail; blockers paths.
 
 ---
 
@@ -24,7 +25,7 @@ POC-001’s `downstream/poc/aar_poc_001/harness/run_loop.py` is a **downstream-l
 ```bash
 # Terminal 1 — dashboard / API (local mode)
 python run.py server --port 8000
-# → run.py:cmd_server → aar/web_ui/backend (uvicorn app)
+# → run.py:cmd_server → subprocess `python app.py` in aar/web_ui/backend (Flask, NOT uvicorn/fastapi)
 
 # Terminal 2 — research agent
 export ANTHROPIC_API_KEY=…          # required (run.py:cmd_agent)
@@ -48,20 +49,23 @@ PYTHONPATH=. bash generic_aar/run_example.sh
 
 | Step | File | Symbol / command |
 |------|------|------------------|
-| 1 | `run.py` | `main()` → `cmd_agent()` — requires `ANTHROPIC_API_KEY`; sets local env; constructs loop |
-| 2 | `aar/research_loop/agent.py` | `AutonomousAgentLoop.__init__` — MCP `server-api-tools`, prompt template, iteration caps |
-| 3 | `aar/research_loop/agent.py` | `AutonomousAgentLoop.run` — `while True`: max_iterations / timeout → `_run_session` → `session_count += 1` (**NEXT ITERATION**) |
-| 4 | `aar/research_loop/agent.py` | `_run_session` — fresh Claude session via `BaseAgent` + resolved prompt (`_get_prompt` → `resolve_prompt`) |
-| 5 | `aar/research_loop/agent.py` | `_create_agent` — tools: Read/Write/Edit/Bash/… + MCP `evaluate_model`, `submit_idea_proposal`, `share_finding`, `get_leaderboard`, … |
-| 6 | Agent action (prompted) | Write `aar/ideas/<name>/run.py` with `run_experiment(config) -> {"model_path": ...}` (**submit-model contract**) |
-| 7 | MCP | `submit_idea_proposal` → `aar/research_loop/monitor.py` integrity gate (bound to `run.py` bytes) |
-| 8 | MCP | `evaluate_model` in `aar/research_loop/tools/server_api_tools.py:evaluate_model` |
-| 9 | Transport | `aar/transport.py:put_model(model_path, run_id)` → `SUBMISSIONS_DIR/<run_id>/…` |
-| 10a fs | `aar/web_ui/backend/eval_orchestration.py:evaluate_model` | `spawn_eval` → Slurm `sbatch` **or** local `python -m aar.eval_pod.entrypoint --run-id … --suite …`; then `poll_scores` |
-| 10b s3 | same + HTTP `/api/evaluate-model` | RunPod eval pod |
+| 1 | `run.py` | `main()` → `cmd_agent()` — requires `ANTHROPIC_API_KEY`; `--local` sets `ORCHESTRATOR_API_URL`/`LOCAL_MODE`; constructs `AutonomousAgentLoop` then `asyncio.run(loop.run())` |
+| 2 | `aar/research_loop/agent.py` | `AutonomousAgentLoop.__init__` — MCP `create_server_api_tools_server()`, optional findings sync (skipped in local), `max_iterations`/`MAX_ITERATIONS` |
+| 3 | `aar/research_loop/agent.py` | `AutonomousAgentLoop.run` — `while True`: stop if `session_count >= max_iterations` or `_StopChecker.check()`; else `await _run_session()`; **on success only** `session_count += 1` then optional `_sync_to_s3` (**NEXT ITERATION** = back to while) |
+| 4 | `aar/research_loop/agent.py` | `_run_session` — mint `session_<nnn>_<tag>_<ts>` log; `prompt = _get_prompt()` (`PROMPT_TEMPLATE` → `resolve_prompt`); `_create_agent(...)`; `await agent.execute(task=prompt)` (**prompt is the task query, not `system_prompt`** — `_create_agent` leaves `system_prompt=None`) |
+| 5a | `aar/research_loop/agent.py` | `_create_agent` — tools: Read/Write/Edit/Bash/Glob/Grep/WebSearch/WebFetch + MCP `evaluate_model`, `evaluate_predictions`, `share_finding`, `get_leaderboard`, `get_literature`, `share_literature`, `submit_idea_proposal` (+ `download_snapshot` if not local) |
+| 5b | `aar/research_loop/agent.py` | `BaseAgent.execute` → `_execute_once` → `ClaudeSDKClient(ClaudeAgentOptions(...))` → `client.query(task)` → `receive_response` until `ResultMessage`; 529 overload retries in `execute` |
+| 6 | Agent action (prompted) | Write `aar/ideas/<name>/run.py` with `run_experiment(config) -> {"model_path": ...}` (**submit-model contract**; see `aar/ideas/TEMPLATE/run.py`) |
+| 7 | MCP | `submit_idea_proposal` → `aar/research_loop/monitor.py` integrity gate (approval bound to `run.py` bytes; `MONITOR_REQUIRED` default on) |
+| 8 | MCP | `server_api_tools.evaluate_model` — gate → `_stamp_run_proposal` → `transport.put_model` |
+| 9 | Transport | `aar/transport.py:put_model(model_path, run_id)` → `SUBMISSIONS_DIR/<run_id>/model` + `.submitted` (fs) |
+| 10a fs | `aar/web_ui/backend/eval_orchestration.py:evaluate_model` | **Default `EVAL_VIA_WORKER=true`:** **poll-only** (`poll_scores` / `transport.read_scores`) — does **not** spawn. **`EVAL_VIA_WORKER=false`:** `spawn_eval` → Slurm `sbatch EVAL_SLURM_SCRIPT` **or** local `Popen(python -m aar.eval_pod.entrypoint …)` then `poll_scores` |
+| 10b s3 | `server_api_tools` HTTP `/api/evaluate-model` → orchestration `_spawn_s3` | RunPod `deploy_pod` running `aar.eval_pod.entrypoint` |
 | 11 | `aar/eval_pod/entrypoint.py:main` | `transport.get_model` → `resolve_suite_dir` → `run_eval.run` → `strip_held_out` → `transport.put_scores`; full held-out → `HELDOUT_SCORES_DIR` |
-| 12 | `aar/eval_pod/run_eval.py:run` | `load_model` → per-benchmark score → composite (`aar/benchmarks/composite.py`) |
-| 13 | Back to agent | research-readable scores only (held-out stripped in `server_api_tools._strip_held_out`) → `share_finding` → log → **loop to step 3** |
+| 12 | `aar/eval_pod/run_eval.py:run` | `load_model` (`aar/eval_pod/models.py`) → per-benchmark score → `compute_composite` (`aar/benchmarks/composite.py`); research `out` is held-out-stripped |
+| 13 | Back to agent | scores returned (extra `_strip_held_out` in MCP) → optional `share_finding` → session log ends → **return to step 3** |
+
+**Session failure path:** if `_run_session` raises, `session_count` is **not** incremented; `_StopChecker.record_error()`; sleep 30s (or `OVERLOADED_WAIT_SECONDS` on 529) then retry while-loop.
 
 Stop conditions (`AutonomousAgentLoop.run`): `max_iterations` / `MAX_ITERATIONS`, runtime timeout (`_StopChecker`), user interrupt.
 
@@ -119,17 +123,26 @@ After adapters exist, temporarily remove/rename `aar/` and `generic_aar/` and at
 
 ## 4. UNPATCHED blockers (evidence captured)
 
-File: `/workspace/aar-infra/poc002_evidence/unpatched_env_probe.txt`
+Evidence dirs (do not install yet):
+- `downstream/poc/aar_poc_002/evidence/unpatched_failures/` — `env_probe.txt`, `agent_local.txt`, `agent_local_with_fake_key.txt`, `server.txt`
+- `/workspace/aar-infra/poc002_evidence/unpatched_env_probe.txt` — condensed probe on `.venv-smoke`
 
-| Check | Result |
-|-------|--------|
-| `ANTHROPIC_API_KEY` | **UNSET** → `run.py agent` prints `Error: ANTHROPIC_API_KEY is required for agent mode` |
-| `claude_agent_sdk` | not installed (smoke venv) |
-| `anthropic` | not installed |
-| `fastapi` / `uvicorn` | not installed (needed for `run.py server`) |
-| `yaml` | present in smoke venv |
+| Check | Result | Evidence command / file |
+|-------|--------|-------------------------|
+| `ANTHROPIC_API_KEY` | **UNSET** → agent exits before import | `python run.py agent --idea-uid poc002 --idea-name poc002 --local` → `agent_local.txt` |
+| `claude_agent_sdk` | **MISSING** (system python + smoke venv) | after fake key: `ModuleNotFoundError: claude_agent_sdk` → `agent_local_with_fake_key.txt` |
+| `anthropic` | **MISSING** | `python3 -c 'import anthropic'` / `env_probe.txt` |
+| `flask` (+ `flask_cors`) | **MISSING** — **actual** `run.py server` stack | `python run.py server` → `server.txt` (`from flask import Flask`) |
+| `fastapi` / `uvicorn` | **MISSING** | listed in probes; **not** what `cmd_server` launches (Flask `app.py`) |
+| `yaml` (PyYAML) | **MISSING** in system `python3`; **present** in `/workspace/aar-infra/.venv-smoke` | needed by `aar.eval_pod.run_eval` (`import yaml`) |
+| `jinja2` | **MISSING** (system + smoke) | needed by `resolve_prompt` / prompt templates |
 
 Policy: keep this failure evidence; then decide minimal install/patch; report **UNPATCHED** vs **PATCHED** separately. Do not silently fix upstream bugs.
+
+### Upstream bugs noted while mapping (do not fix)
+- `HARNESS.md` ends with a stray markdown fence (```) after the Phase-2 list.
+- Docs/probes sometimes say fastapi/uvicorn for the dashboard; code path is Flask (`aar/web_ui/backend/app.py`).
+- `LAUNCH.md` notes `AutonomousAgentLoop` still carries some W2S-flow assumptions; first live local multi-iter is a smoke test.
 
 ---
 

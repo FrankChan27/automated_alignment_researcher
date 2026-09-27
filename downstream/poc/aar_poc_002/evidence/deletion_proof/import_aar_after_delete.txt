@@ -1,0 +1,5 @@
+[poc002 sitecustomize] skip: No module named 'aar'
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+    import aar
+ModuleNotFoundError: No module named 'aar'

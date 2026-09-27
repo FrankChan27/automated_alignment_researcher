@@ -1,0 +1,6 @@
+=== PATCHED server import smoke 2026-09-28T01:53:14+08:00 ===
+Flask app OK <class 'flask.app.Flask'>
+AutonomousAgentLoop OK
+benches ['poc002_capability', 'poc002_heldout', 'poc002_hillclimb']
+ANTHROPIC_API_KEY=
+claude CLI: ABSENT

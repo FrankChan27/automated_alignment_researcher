@@ -1,0 +1,4 @@
+scores_mid.json: headline_pct=37.0 passes_filter=True closed={'poc002_hillclimb': 37.0} hillclimb_mean=0.37002399999999996
+scores_near.json: headline_pct=99.74 passes_filter=True closed={'poc002_hillclimb': 99.74} hillclimb_mean=0.9974040000000001
+scores_oob.json: headline_pct=0.0 passes_filter=False closed={'poc002_hillclimb': 0.0} hillclimb_mean=0.0
+SMOKE_OK near_headline > mid_headline; oob fails filter
