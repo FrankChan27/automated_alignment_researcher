@@ -1,0 +1,10 @@
+# Live run trees can be large; freeze summaries under evidence/ instead.
+runs/
+!runs/.gitkeep
+
+# bytecode
+**/__pycache__/
+*.py[cod]
+
+# never commit accidental secret copies outside eval_secret/
+*.secret.json

@@ -1,0 +1,436 @@
+{
+  "experiment": "AAR-POC-001",
+  "iteration": 25,
+  "history": [
+    {
+      "iteration": 1,
+      "ok": true,
+      "score": -22330.1,
+      "vector": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "strategy": "init_zeros"
+    },
+    {
+      "iteration": 3,
+      "ok": true,
+      "score": -20669.6,
+      "vector": [
+        0,
+        0,
+        0,
+        0,
+        18,
+        0,
+        7,
+        0
+      ],
+      "strategy": "mutate_best"
+    },
+    {
+      "iteration": 4,
+      "ok": true,
+      "score": -17213.3,
+      "vector": [
+        0,
+        0,
+        0,
+        12,
+        18,
+        0,
+        0,
+        0
+      ],
+      "strategy": "mutate_best"
+    },
+    {
+      "iteration": 5,
+      "ok": true,
+      "score": -17213.3,
+      "vector": [
+        0,
+        0,
+        0,
+        12,
+        18,
+        0,
+        0,
+        0
+      ],
+      "strategy": "coord_probe"
+    },
+    {
+      "iteration": 6,
+      "ok": true,
+      "score": -17213.3,
+      "vector": [
+        0,
+        0,
+        0,
+        12,
+        18,
+        0,
+        0,
+        0
+      ],
+      "strategy": "mutate_best"
+    },
+    {
+      "iteration": 7,
+      "ok": true,
+      "score": -14501.599999999999,
+      "vector": [
+        0,
+        13,
+        41,
+        12,
+        18,
+        0,
+        0,
+        0
+      ],
+      "strategy": "mutate_best"
+    },
+    {
+      "iteration": 8,
+      "ok": true,
+      "score": -14323.8,
+      "vector": [
+        1,
+        13,
+        41,
+        12,
+        19,
+        0,
+        0,
+        0
+      ],
+      "strategy": "mutate_best"
+    },
+    {
+      "iteration": 9,
+      "ok": true,
+      "score": -13075.2,
+      "vector": [
+        16,
+        13,
+        48,
+        12,
+        4,
+        0,
+        0,
+        0
+      ],
+      "strategy": "mutate_best"
+    },
+    {
+      "iteration": 10,
+      "ok": true,
+      "score": -13075.2,
+      "vector": [
+        16,
+        13,
+        48,
+        12,
+        4,
+        0,
+        0,
+        0
+      ],
+      "strategy": "coord_probe"
+    },
+    {
+      "iteration": 11,
+      "ok": true,
+      "score": -17863.2,
+      "vector": [
+        10,
+        13,
+        48,
+        0,
+        4,
+        0,
+        0,
+        0
+      ],
+      "strategy": "mutate_best"
+    },
+    {
+      "iteration": 12,
+      "ok": true,
+      "score": -14041.2,
+      "vector": [
+        16,
+        13,
+        48,
+        9,
+        4,
+        0,
+        0,
+        0
+      ],
+      "strategy": "mutate_best"
+    },
+    {
+      "iteration": 13,
+      "ok": true,
+      "score": -12861.5,
+      "vector": [
+        16,
+        22,
+        48,
+        12,
+        4,
+        0,
+        0,
+        11
+      ],
+      "strategy": "mutate_best"
+    },
+    {
+      "iteration": 14,
+      "ok": true,
+      "score": -7847.200000000001,
+      "vector": [
+        16,
+        16,
+        48,
+        22,
+        4,
+        0,
+        35,
+        10
+      ],
+      "strategy": "mutate_best"
+    },
+    {
+      "iteration": 15,
+      "ok": true,
+      "score": -5680.9,
+      "vector": [
+        79,
+        75,
+        20,
+        52,
+        69,
+        22,
+        55,
+        60
+      ],
+      "strategy": "random_restart"
+    },
+    {
+      "iteration": 16,
+      "ok": true,
+      "score": -5656.9,
+      "vector": [
+        67,
+        75,
+        20,
+        52,
+        69,
+        22,
+        55,
+        60
+      ],
+      "strategy": "mutate_best"
+    },
+    {
+      "iteration": 17,
+      "ok": true,
+      "score": -4671.299999999999,
+      "vector": [
+        67,
+        75,
+        20,
+        52,
+        69,
+        22,
+        55,
+        52
+      ],
+      "strategy": "mutate_best"
+    },
+    {
+      "iteration": 18,
+      "ok": true,
+      "score": -4786.5,
+      "vector": [
+        67,
+        75,
+        18,
+        52,
+        69,
+        22,
+        55,
+        52
+      ],
+      "strategy": "mutate_best"
+    },
+    {
+      "iteration": 19,
+      "ok": true,
+      "score": -6866.299999999999,
+      "vector": [
+        67,
+        75,
+        20,
+        44,
+        69,
+        14,
+        55,
+        53
+      ],
+      "strategy": "mutate_best"
+    },
+    {
+      "iteration": 20,
+      "ok": true,
+      "score": -3033.7999999999993,
+      "vector": [
+        67,
+        75,
+        20,
+        57,
+        69,
+        27,
+        55,
+        47
+      ],
+      "strategy": "coord_probe"
+    },
+    {
+      "iteration": 21,
+      "ok": true,
+      "score": -1479.7999999999993,
+      "vector": [
+        67,
+        75,
+        20,
+        57,
+        34,
+        27,
+        55,
+        47
+      ],
+      "strategy": "mutate_best"
+    },
+    {
+      "iteration": 22,
+      "ok": true,
+      "score": -497.0,
+      "vector": [
+        67,
+        73,
+        27,
+        57,
+        41,
+        27,
+        55,
+        43
+      ],
+      "strategy": "mutate_best"
+    },
+    {
+      "iteration": 23,
+      "ok": true,
+      "score": -159.5,
+      "vector": [
+        67,
+        73,
+        27,
+        57,
+        41,
+        32,
+        55,
+        43
+      ],
+      "strategy": "mutate_best"
+    },
+    {
+      "iteration": 24,
+      "ok": true,
+      "score": -1157.5,
+      "vector": [
+        64,
+        72,
+        27,
+        49,
+        41,
+        32,
+        50,
+        43
+      ],
+      "strategy": "mutate_best"
+    },
+    {
+      "iteration": 25,
+      "ok": true,
+      "score": -421.89999999999964,
+      "vector": [
+        71,
+        77,
+        27,
+        61,
+        41,
+        32,
+        59,
+        43
+      ],
+      "strategy": "coord_probe"
+    }
+  ],
+  "best_vector": [
+    67,
+    73,
+    27,
+    57,
+    41,
+    32,
+    55,
+    43
+  ],
+  "best_score": -159.5,
+  "best_iteration": 23,
+  "last_vector": [
+    71,
+    77,
+    27,
+    61,
+    41,
+    32,
+    59,
+    43
+  ],
+  "last_score": -421.89999999999964,
+  "injected_oob_failure": true,
+  "rng_seed": 42,
+  "failures": [
+    {
+      "iteration": 2,
+      "phase": "evaluator",
+      "error": "vector[0]=150 out of bounds [0,100]",
+      "vector": [
+        150,
+        50,
+        50,
+        -5,
+        50,
+        50,
+        50,
+        50
+      ],
+      "strategy": "inject_oob_failure",
+      "recovered": true,
+      "ts": "2026-09-27T17:26:50.880172+00:00"
+    }
+  ],
+  "updated_at": "2026-09-27T17:26:52.276699+00:00"
+}

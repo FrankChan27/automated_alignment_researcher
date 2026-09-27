@@ -1,0 +1,10 @@
+{
+  "role": "train",
+  "dims": 8,
+  "bounds": [0, 100],
+  "target": [72, 18, 55, 91, 33, 67, 44, 12],
+  "weights": [1.0, 1.5, 0.8, 2.0, 1.2, 0.9, 1.1, 1.4],
+  "base_score": 10000,
+  "oob_penalty_per_dim": 500,
+  "formula_note": "score = base_score - sum_i w_i*(v_i-T_i)^2 - oob_penalty. RESEARCHER MUST NOT IMPORT THIS FILE."
+}

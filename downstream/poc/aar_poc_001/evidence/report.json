@@ -1,0 +1,236 @@
+{
+  "experiment": "AAR-POC-001",
+  "completed_at": "2026-09-27T17:26:52.314177+00:00",
+  "iterations_requested": 25,
+  "iterations_completed": 25,
+  "score_trajectory": [
+    {
+      "iteration": 1,
+      "score": -22330.1,
+      "ok": true,
+      "strategy": "init_zeros"
+    },
+    {
+      "iteration": 3,
+      "score": -20669.6,
+      "ok": true,
+      "strategy": "mutate_best"
+    },
+    {
+      "iteration": 4,
+      "score": -17213.3,
+      "ok": true,
+      "strategy": "mutate_best"
+    },
+    {
+      "iteration": 5,
+      "score": -17213.3,
+      "ok": true,
+      "strategy": "coord_probe"
+    },
+    {
+      "iteration": 6,
+      "score": -17213.3,
+      "ok": true,
+      "strategy": "mutate_best"
+    },
+    {
+      "iteration": 7,
+      "score": -14501.599999999999,
+      "ok": true,
+      "strategy": "mutate_best"
+    },
+    {
+      "iteration": 8,
+      "score": -14323.8,
+      "ok": true,
+      "strategy": "mutate_best"
+    },
+    {
+      "iteration": 9,
+      "score": -13075.2,
+      "ok": true,
+      "strategy": "mutate_best"
+    },
+    {
+      "iteration": 10,
+      "score": -13075.2,
+      "ok": true,
+      "strategy": "coord_probe"
+    },
+    {
+      "iteration": 11,
+      "score": -17863.2,
+      "ok": true,
+      "strategy": "mutate_best"
+    },
+    {
+      "iteration": 12,
+      "score": -14041.2,
+      "ok": true,
+      "strategy": "mutate_best"
+    },
+    {
+      "iteration": 13,
+      "score": -12861.5,
+      "ok": true,
+      "strategy": "mutate_best"
+    },
+    {
+      "iteration": 14,
+      "score": -7847.200000000001,
+      "ok": true,
+      "strategy": "mutate_best"
+    },
+    {
+      "iteration": 15,
+      "score": -5680.9,
+      "ok": true,
+      "strategy": "random_restart"
+    },
+    {
+      "iteration": 16,
+      "score": -5656.9,
+      "ok": true,
+      "strategy": "mutate_best"
+    },
+    {
+      "iteration": 17,
+      "score": -4671.299999999999,
+      "ok": true,
+      "strategy": "mutate_best"
+    },
+    {
+      "iteration": 18,
+      "score": -4786.5,
+      "ok": true,
+      "strategy": "mutate_best"
+    },
+    {
+      "iteration": 19,
+      "score": -6866.299999999999,
+      "ok": true,
+      "strategy": "mutate_best"
+    },
+    {
+      "iteration": 20,
+      "score": -3033.7999999999993,
+      "ok": true,
+      "strategy": "coord_probe"
+    },
+    {
+      "iteration": 21,
+      "score": -1479.7999999999993,
+      "ok": true,
+      "strategy": "mutate_best"
+    },
+    {
+      "iteration": 22,
+      "score": -497.0,
+      "ok": true,
+      "strategy": "mutate_best"
+    },
+    {
+      "iteration": 23,
+      "score": -159.5,
+      "ok": true,
+      "strategy": "mutate_best"
+    },
+    {
+      "iteration": 24,
+      "score": -1157.5,
+      "ok": true,
+      "strategy": "mutate_best"
+    },
+    {
+      "iteration": 25,
+      "score": -421.89999999999964,
+      "ok": true,
+      "strategy": "coord_probe"
+    }
+  ],
+  "first_score": -22330.1,
+  "best_train_score": -159.5,
+  "best_artifact": {
+    "vector": [
+      67,
+      73,
+      27,
+      57,
+      41,
+      32,
+      55,
+      43
+    ]
+  },
+  "best_iteration": 23,
+  "improved": true,
+  "first_improvement_iteration": 3,
+  "heldout": {
+    "ok": true,
+    "error": null,
+    "score": 2938.3999999999996,
+    "details": {
+      "sq_error_weighted": 7061.6,
+      "n_out_of_bounds": 0,
+      "oob_penalty": 0.0,
+      "valid_bounds": true
+    },
+    "role": "heldout",
+    "iteration": 23,
+    "artifact_path": "/workspace/aar-infra/automated_alignment_researcher/downstream/poc/aar_poc_001/runs/AAR-POC-001/best/artifact.json",
+    "vector": [
+      67,
+      73,
+      27,
+      57,
+      41,
+      32,
+      55,
+      43
+    ],
+    "evaluator_returncode": 0,
+    "note": "Held-out run exactly once after train loop; never shown to researcher during loop."
+  },
+  "failures": [
+    {
+      "iteration": 2,
+      "phase": "evaluator",
+      "error": "vector[0]=150 out of bounds [0,100]",
+      "vector": [
+        150,
+        50,
+        50,
+        -5,
+        50,
+        50,
+        50,
+        50
+      ],
+      "strategy": "inject_oob_failure",
+      "recovered": true,
+      "ts": "2026-09-27T17:26:50.880172+00:00"
+    }
+  ],
+  "isolation": {
+    "researcher_env_has_secret": false,
+    "evaluator_env_has_secret": true,
+    "eval_secret_mode": "0o700",
+    "notes": "Researcher subprocess runs without AAR_POC_SECRET_PATH; evaluator subprocess receives it. Score JSON omits target/weights. Held-out run exactly once after the train loop."
+  },
+  "paths": {
+    "run_dir": "/workspace/aar-infra/automated_alignment_researcher/downstream/poc/aar_poc_001/runs/AAR-POC-001",
+    "state": "/workspace/aar-infra/automated_alignment_researcher/downstream/poc/aar_poc_001/runs/AAR-POC-001/state.json",
+    "trajectory": "/workspace/aar-infra/automated_alignment_researcher/downstream/poc/aar_poc_001/runs/AAR-POC-001/trajectory.jsonl",
+    "failures": "/workspace/aar-infra/automated_alignment_researcher/downstream/poc/aar_poc_001/runs/AAR-POC-001/failures.jsonl",
+    "heldout": "/workspace/aar-infra/automated_alignment_researcher/downstream/poc/aar_poc_001/runs/AAR-POC-001/heldout/result.json",
+    "report_json": "/workspace/aar-infra/automated_alignment_researcher/downstream/poc/aar_poc_001/runs/AAR-POC-001/report.json",
+    "report_md": "/workspace/aar-infra/automated_alignment_researcher/downstream/poc/aar_poc_001/runs/AAR-POC-001/REPORT.md"
+  },
+  "git": {
+    "branch": "downstream/aar-poc-001",
+    "status_summary": "?? downstream/poc/",
+    "aar_generic_diff_stat": "(empty)",
+    "upstream_untouched": true
+  }
+}

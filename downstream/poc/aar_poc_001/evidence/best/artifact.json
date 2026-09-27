@@ -1,0 +1,19 @@
+{
+  "vector": [
+    67,
+    73,
+    27,
+    57,
+    41,
+    32,
+    55,
+    43
+  ],
+  "dims": 8,
+  "strategy": "mutate_best",
+  "proposed_iteration": 23,
+  "meta": {
+    "proposer": "aar_poc_001.researcher.proposer",
+    "sees_secrets": false
+  }
+}
