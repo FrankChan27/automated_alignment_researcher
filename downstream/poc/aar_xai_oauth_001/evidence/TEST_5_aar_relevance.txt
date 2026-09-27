@@ -1,0 +1,20 @@
+=== TEST 5: AAR researcher-inference relevance 2026-09-28T02:07:53+08:00 ===
+READ_ONLY cites (no aar/ or generic_aar/ modifications):
+
+1) /workspace/aar-infra/poc002_entrypoint_map.md
+   - run.py cmd_agent requires ANTHROPIC_API_KEY (exits if unset)
+   - aar/research_loop/agent.py BaseAgent → ClaudeSDKClient(ClaudeAgentOptions(...))
+   - Env probe: ANTHROPIC_API_KEY UNSET blocks agent before import
+
+2) downstream/poc/aar_poc_002/REPORT.md + STATUS.md + blocker_probe.md + evidence/anthropic_hard_bind.md
+   - Official entrypoint hard-binds Anthropic / Claude Agent SDK
+   - Policy freeze: no Anthropic; no PATCHED provider swap; no POC-001 substitute loop
+   - Stub eval path works without Anthropic; agent loop does not
+
+CONCLUSION_FOR_AAR_AS_SHIPPED:
+- Even if CASE A were later proven for raw xAI/Grok OAuth→inference, substituting that session into the *AAR researcher agent loop as shipped* would require patching aar/ (ClaudeSDKClient / ANTHROPIC_API_KEY bind) which this mission forbids.
+- No official non-patch path found to point AutonomousAgentLoop at xAI OAuth session.
+- Therefore CAN_XAI_OAUTH_AUTHENTICATE_RESEARCHER_INFERENCE for *AAR researcher inference as shipped* cannot be true from xAI OAuth alone under no-patch policy.
+- This run stopped at HUMAN_GATE (CASE C) before proving raw xAI OAuth→inference; AAR gap is independently documented.
+
+OFFICIAL_NON_PATCH_PATH_TO_SWAP_PROVIDER=NOT_FOUND

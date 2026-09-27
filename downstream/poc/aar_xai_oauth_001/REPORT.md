@@ -1,45 +1,35 @@
-# AAR-xAI-OAuth-001 REPORT
+# REPORT — aar_xai_oauth_001
 
-**Date:** 2026-09-28 (UTC+8)  
-**Branch:** `downstream/aar-xai-oauth-001`  
-**Parent HEAD:** `71842398db939801bafcfe98a66dbeb922a15297`  
-**RESEARCH_SHA:** `4d048f56b8841d779e8c2b033d19a9bed7d57e43` (branch tip = git tip of this branch)  
-**Mission:** Determine `CAN_XAI_OAUTH_AUTHENTICATE_RESEARCHER_INFERENCE` and `FINAL_CASE` ∈ {A..F}.
+**CASE: C**  
+**CAN_XAI_OAUTH_AUTHENTICATE_RESEARCHER_INFERENCE:** `null` (unknown; CASE C — Human Gate)  
+**HUMAN_GATE:** `true`  
+**Tests completed:** 0,1,2,3 (gate),4=SKIPPED_NO_SESSION,5  
 
-## Verdict
+## One-line CASE
+Official device-code OAuth at `auth.x.ai` is real and startable via `grok login --device-auth`, but this host cannot finish without interactive browser confirmation — stopped at Human Gate before any session inference proof.
 
-| Field | Value |
-|-------|-------|
-| `CAN_XAI_OAUTH_AUTHENTICATE_RESEARCHER_INFERENCE` | **unknown** |
-| `FINAL_CASE` | **D** |
-| `XAI_OAUTH_HUMAN_GATE` | **REQUIRED** |
-| `HUMAN` | 0 |
-| Phase 2 inference smoke | **not run** (A/B path not justified) |
-| AAR provider adapter | **not implemented** (mission forbids) |
+## Evidence pointers
+- `AUTH_SURFACE_MAP.md` — hosts, flows, stores, headers, CASE defs
+- `evidence/TEST_0_inventory.txt`
+- `evidence/TEST_1_public_discovery.txt` + `evidence/auth_x_ai_openid_configuration.json`
+- `evidence/TEST_2_unauth_inference.txt` (all official probes HTTP 401)
+- `evidence/TEST_3_device_code_start.txt` (URL host/path + user_code metadata; values redacted)
+- `evidence/TEST_4_session_inference.txt` (SKIPPED_NO_SESSION)
+- `evidence/TEST_5_aar_relevance.txt` (Anthropic hard-bind cites)
+- `evidence/REF_official_02-authentication.md` (CLI bundled auth guide)
 
-## Why CASE D
+## HUMAN_GATE
+- **Status:** true  
+- **Why:** Device-code flow requires user to open `accounts.x.ai/oauth2/device` and confirm code.  
+- **Next human step:** Run `grok login --device-auth` on an allowed host → approve in browser → confirm `~/.grok/auth.json` present (metadata only) → re-run TEST 4 inference with Bearer from file (no echo) against `api.x.ai` and/or `cli-chat-proxy.grok.com`.
 
-1. Local Grok/xAI **OAuth session ABSENT** (`~/.grok/auth.json` ABSENT; `XAI_API_KEY` ABSENT; `grok` CLI ABSENT).
-2. Official **Grok Build / CLI** OAuth is documented (`auth.x.ai`, `grok login`, device-code) but acquiring a session needs **human browser or device consent**.
-3. Mission hard rule: HUMAN=0 → set `XAI_OAUTH_HUMAN_GATE=REQUIRED` and **STOP** (CASE D). Do not automate login.
-4. Official **public REST/Responses API** documents **API key** Bearer auth only — `PUBLIC_API_OAUTH_DOCUMENTED=false`. Do not reverse-engineer third-party OAuth-client reuse to claim public API OAuth support.
-5. Therefore empirical answer for researcher inference via OAuth remains **unknown** until a human completes official OAuth (or supplies an existing session / key outside this mission).
+## AAR-as-shipped note
+Even after a future CASE A for raw xAI OAuth→inference, shipped AAR researcher loop still hard-binds Anthropic (`run.py` / `ClaudeSDKClient`); substituting xAI without patching `aar/` was **not** found. That alone would keep CAN false for *AAR researcher inference as shipped* unless an official non-patch path appears.
 
-## What Phase 1 established
-
-- **TEST 0:** Grok Build + CLI OAuth documented; public API OAuth **not** documented; MCP OAuth documented only for **outbound** MCP servers.
-- **TEST 1:** No portable OAuth credential on box; no xAI MCP; grok.com cookie domains present in chrome seed (**not** treated as researcher auth).
-- Unauth probes: `api.x.ai/v1/models` and `cli-chat-proxy.grok.com/v1/models` → HTTP 401 (RUNTIME_OBSERVATION).
-- OIDC discovery live at `auth.x.ai` with `api:access` + `grok-cli:access` scopes (RUNTIME_OBSERVATION ≠ official third-party API OAuth guide).
-
-## Explicit non-claims
-
-- Did **not** claim public API accepts Grok CLI OAuth tokens.
-- Did **not** use Grok Bot host identity / web cookies as API credentials.
-- Did **not** create/buy xAI API keys; no Anthropic; no Cursor; no AAR-POC-002 agent continuation; no edits under `aar/` or `generic_aar/`.
-
-## Outputs
-
-- `AUTH_SURFACE_MAP.md`, `OFFICIAL_SOURCE_MAP.md`, `CASE_LADDER.md`, `TEST_MATRIX.md`
-- `evidence/` (metadata only; no tokens/cookies/keys)
-- `provenance.json`
+## Constraints honored
+- Work only under `downstream/poc/aar_xai_oauth_001/`
+- Branch `downstream/aar-xai-oauth-001` (verified)
+- No `aar/` / `generic_aar/` edits
+- No Cursor CloudAgent; no Anthropic; no xAI API key create/purchase; no auth/billing bypass
+- HUMAN=0: did not complete browser login
+- Secrets: no token/cookie/key values in evidence (user_code redacted); `REPO_SECRET_WRITTEN=false`

@@ -5,8 +5,8 @@
   "PARENT_SHA": "71842398db939801bafcfe98a66dbeb922a15297",
   "BASE_SHA": "71842398db939801bafcfe98a66dbeb922a15297",
   "OUTPUT_DIR": "downstream/poc/aar_xai_oauth_001",
-  "CAN_XAI_OAUTH_AUTHENTICATE_RESEARCHER_INFERENCE": "unknown",
-  "FINAL_CASE": "D",
+  "CAN_XAI_OAUTH_AUTHENTICATE_RESEARCHER_INFERENCE": null,
+  "FINAL_CASE": "C",
   "XAI_OAUTH_HUMAN_GATE": "REQUIRED",
   "HUMAN": 0,
   "TEST_0": {
@@ -27,13 +27,16 @@
     "MCP_XAI_SERVER_PRESENT": false,
     "GROK_WEB_COOKIE_DOMAINS_PRESENT": true
   },
-  "PHASE_2": "skipped_not_justified",
+  "PHASE_2": "executed_through_TEST_3_HUMAN_GATE_then_TEST_4_skip_TEST_5",
   "INFERENCE_SMOKE": false,
   "ADAPTER_IMPLEMENTED": false,
   "SECRETS_IN_EVIDENCE": false,
   "AAR_GENERIC_AAR_MODIFIED": false,
-  "timestamp_utc8": "2026-09-28T02:05:53+08:00",
+  "timestamp_utc8": "2026-09-28T02:08:30+08:00",
   "RESEARCH_COMMIT": "4d048f56b8841d779e8c2b033d19a9bed7d57e43",
   "RESEARCH_SHA": "4d048f56b8841d779e8c2b033d19a9bed7d57e43",
-  "NOTE": "Branch tip is git tip of downstream/aar-xai-oauth-001; RESEARCH_SHA is primary research commit."
+  "NOTE": "Branch tip is git tip of downstream/aar-xai-oauth-001; RESEARCH_SHA is primary research commit.",
+  "HUMAN_GATE": true,
+  "NOTE_CASE_ALIGNMENT": "Earlier draft used alternate CASE map (Human Gate\u2192D). Mission-frozen map: Human Gate\u2192C. STATUS.json/REPORT.md are authoritative.",
+  "CALLBACK_COORDINATOR_ID": "904cf927-4424-497c-a764-302841e56583"
 }

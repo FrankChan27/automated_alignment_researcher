@@ -1,28 +1,14 @@
-# TEST_MATRIX — AAR-xAI-OAuth-001
+# TEST_MATRIX — aar_xai_oauth_001 (aligned to mission ladder)
 
-Date: 2026-09-28 (UTC+8)
+Date: 2026-09-28 (UTC+8). Authoritative table: `LADDER.md`.
 
-| Test | Purpose | Result | Evidence | Notes |
-|------|---------|--------|----------|-------|
-| **0** | Docs flags | DONE | AUTH_SURFACE_MAP.md, OFFICIAL_SOURCE_MAP.md | PUBLIC_API_OAUTH_DOCUMENTED=false; GROK_BUILD_OAUTH_DOCUMENTED=true; CLI_OAUTH_DOCUMENTED=true; MCP_OAUTH_DOCUMENTED=true (outbound MCP only) |
-| **1** | Local credential + MCP discovery (metadata only) | DONE | evidence/test1_local_discovery.txt, evidence/TEST_0_inventory.txt, evidence/test1_mcp_status.txt, evidence/test1_browser_cookie_domains_meta.txt | XAI_OAUTH_CREDENTIAL_PRESENT=false; grok CLI ABSENT; MCP xAI ABSENT; grok.com cookie domains PRESENT (not usable as API/CLI OAuth) |
-| **1b** | Public discovery / unauth probes | DONE | evidence/TEST_1_public_discovery.txt, evidence/auth_x_ai_openid_configuration.json | OIDC 200; api.x.ai/v1/models → 401 unauthenticated; cli-chat-proxy/v1/models → 401 |
-| **2-neg** | Unauth inference negative control (no creds) | DONE | evidence/TEST_2_unauth_inference.txt | api.x.ai + cli-chat-proxy → 401; cookies redacted |
-| **2** | Authenticated account/models metadata | **SKIPPED** | — | Not justified: no OAuth session / API key; would require human OAuth → CASE D |
-| **3** | Token scope/audience metadata (safe) | **SKIPPED** | — | No token present; TOKEN_SCOPE_KNOWN=false; TOKEN_AUDIENCE_KNOWN=false |
-| **4** | Authenticated lightweight API (non-inference) | **SKIPPED** | — | Same gate |
-| **5** | ≤1 inference smoke (`XAI_OAUTH_RESEARCHER_SMOKE_OK`) | **SKIPPED** | — | A/B path not justified |
+| Test | Purpose | Result | Evidence |
+|------|---------|--------|----------|
+| **0** | Local inventory (env/CLI/auth.json metadata) | DONE | `evidence/TEST_0_inventory.txt` (+ early `test1_local_discovery.txt`) |
+| **1** | Public discovery / OIDC / docs | DONE | `evidence/TEST_1_public_discovery.txt`, `auth_x_ai_openid_configuration.json` |
+| **2** | Unauth inference negative control | DONE | `evidence/TEST_2_unauth_inference.txt` (401s) |
+| **3** | Device-code OAuth start (no human complete) | DONE → HUMAN_GATE | `evidence/TEST_3_device_code_start.txt` |
+| **4** | Session token inference | SKIPPED_NO_SESSION | `evidence/TEST_4_session_inference.txt` |
+| **5** | AAR researcher loop Anthropic hard-bind relevance | DONE | `evidence/TEST_5_aar_relevance.txt` |
 
-## TEST 1 field block
-
-```
-XAI_OAUTH_CREDENTIAL_PRESENT=false
-CREDENTIAL_SOURCE=none
-CREDENTIAL_TYPE=ABSENT
-TOKEN_SCOPE_KNOWN=false
-TOKEN_AUDIENCE_KNOWN=false
-GROK_CLI_PRESENT=false
-XAI_API_KEY_ENV=ABSENT
-MCP_XAI_SERVER_PRESENT=false
-GROK_WEB_COOKIE_DOMAINS_PRESENT=true
-```
+Final CASE **C**; CAN null; HUMAN_GATE true.

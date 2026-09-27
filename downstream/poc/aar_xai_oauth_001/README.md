@@ -1,7 +1,8 @@
 # AAR-xAI-OAuth-001
 
-Research-only: can xAI/Grok **OAuth** authenticate AAR **researcher inference**?
+Research-only: can official xAI/Grok **OAuth** authenticate AAR **researcher inference** (no new API key, no auth bypass)?
 
-See `REPORT.md` for verdict. Maps: `AUTH_SURFACE_MAP.md`, `OFFICIAL_SOURCE_MAP.md`. Tests: `TEST_MATRIX.md`.
+**Verdict:** CASE **C** — device-code OAuth startable; **HUMAN_GATE=true**; CAN = null.  
+See `REPORT.md`, `STATUS.json`, `AUTH_SURFACE_MAP.md`, `LADDER.md`.
 
-**No** provider adapter. **No** secrets in tree.
+No provider adapter. No secrets in tree.

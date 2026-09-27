@@ -1,0 +1,10 @@
+=== TEST 4: Session token inference 2026-09-28T02:07:30+08:00 ===
+RESULT=SKIPPED_NO_SESSION
+REASON=~/.grok/auth.json ABSENT (real home and GROK_HOME=/tmp/grok_home_test3)
+XAI_API_KEY=ABSENT (creating/purchasing forbidden)
+HUMAN_GATE=true blocked completion of device-code login that would populate auth.json
+WOULD_HAVE_DONE_IF_SESSION_PRESENT=
+- Read access_token from auth.json in-process without echoing
+- POST https://api.x.ai/v1/responses and/or https://cli-chat-proxy.grok.com/v1/chat/completions
+- Headers (names): Authorization: Bearer <token>; possibly X-XAI-Token-Auth: xai-grok-cli (name from official binary strings)
+- Record HTTP status + model_response_body_looks_like_inference yes/no

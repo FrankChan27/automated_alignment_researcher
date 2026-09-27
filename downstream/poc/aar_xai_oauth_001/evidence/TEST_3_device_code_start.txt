@@ -1,0 +1,26 @@
+=== TEST 3: OAuth device-code start 2026-09-28T02:07:25+08:00 ===
+GROK_CLI=PRESENT path=/tmp/grok_cli/bin/grok (from @xai-official/grok-linux-x64@1.0.41)
+GROK_HOME=/tmp/grok_home_test3 (isolated)
+COMMAND=timeout ~25s: grok login --device-auth --debug
+
+RESULT=DEVICE_FLOW_STARTED
+VERIFICATION_URI_HOST=accounts.x.ai
+VERIFICATION_URI_PATH=/oauth2/device
+VERIFICATION_URI_HAS_USER_CODE_QUERY=yes (VALUE_REDACTED)
+USER_CODE_PRESENT=YES
+USER_CODE_FORMAT=XXXX-XXXX (A-Z0-9 hyphenated, length=9) VALUE_REDACTED
+POLL_STATUS=WAITING_FOR_AUTHORIZATION
+LOGIN_COMPLETED=false
+AUTH_JSON_WRITTEN=false
+HUMAN_GATE=true
+HUMAN_GATE_REASON=Official device-code flow requires interactive browser confirmation at accounts.x.ai
+NEXT_HUMAN_STEP=Run `grok login --device-auth`, open verification URL, confirm code, wait for ~/.grok/auth.json; then re-run TEST 4.
+
+BINARY_CLIENT_ID: third-party UUID b1a00492-073a-47ea-816f-4c329264a828 NOT present in official binary; official client_id embedded but not extracted as cleartext UUID adjacent to device endpoint (not printed).
+HEADER_NAME_FROM_BINARY_STRINGS=X-XAI-Token-Auth
+HEADER_VALUE_NAME_EXAMPLE_FROM_STRINGS=xai-grok-cli
+CLI_INFERENCE_BASE_FROM_STRINGS=https://cli-chat-proxy.grok.com/v1
+OIDC_DEVICE_ENDPOINT=https://auth.x.ai/oauth2/device/code
+OIDC_TOKEN_ENDPOINT=https://auth.x.ai/oauth2/token
+
+CONSTRAINTS_HONORED=HUMAN=0; did not complete browser confirm; did not obtain tokens; no secrets written to evidence
