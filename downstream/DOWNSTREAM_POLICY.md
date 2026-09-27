@@ -147,3 +147,20 @@ If an open Draft PR already exists whose head branch matches `upstream-sync/*`:
 Do not put secrets/tokens in the repo, workflows, artifacts, or logs.
 Use `GITHUB_TOKEN` in Actions without printing it. Downstream scripts must
 redact token-like strings in logged output.
+
+
+---
+
+## Monitor workflow install note (DOWNSTREAM-LOCAL)
+
+Canonical workflow YAML is committed at:
+
+`downstream/github-workflows/upstream-monitor.yml`
+
+It defines `schedule: cron: "20 20 * * *"` and `workflow_dispatch`.
+
+Installing into `.github/workflows/upstream-monitor.yml` (via
+`downstream/scripts/install_monitor_workflow.sh` + push) requires a git
+credential with the GitHub **`workflow`** OAuth scope. OAuth apps with only
+`repo` scope are refused by GitHub when creating/updating workflow files.
+Until installed, Actions will not schedule; `monitor_once.sh` remains usable locally.
