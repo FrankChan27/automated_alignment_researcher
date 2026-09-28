@@ -90,6 +90,8 @@ class ClaudeSDKSession:
 
 class ClaudeSDKProvider:
     name = "claude_sdk"
+    requires_anthropic_key = True
+    supports_inprocess_mcp = True
 
     def session(self, options: SessionOptions) -> ClaudeSDKSession:
         return ClaudeSDKSession(options)

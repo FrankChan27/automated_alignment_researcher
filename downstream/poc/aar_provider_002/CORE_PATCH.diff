@@ -1,0 +1,211 @@
+diff --git a/aar/research_loop/agent.py b/aar/research_loop/agent.py
+index 8ea87cc..2a60a43 100644
+--- a/aar/research_loop/agent.py
++++ b/aar/research_loop/agent.py
+@@ -2,7 +2,8 @@
+ Autonomous W2S research agent.
+ 
+ Uses a provider-neutral seam (aar.research_loop.provider) so researcher
+-inference can run via Claude Agent SDK or an alternate backend (e.g. grok CLI).
++inference can run via the built-in Claude Agent SDK or an external plugin
++loaded by AAR_AGENT_PROVIDER_MODULE (capability flags, not vendor name branches).
+ Merges agent_loop, base_agent, and stop_conditions into a single file.
+ """
+ 
+@@ -47,7 +48,7 @@ from aar.config import (
+     SERVER_URL,
+     AAR_MODE,
+ )
+-# MCP tool servers import claude_agent_sdk — load lazily only for claude_sdk provider.
++# MCP tool servers import claude_agent_sdk — load lazily when provider.supports_inprocess_mcp.
+ from .tools.findings_sync import FindingsSync
+ 
+ 
+@@ -414,10 +415,10 @@ class AutonomousAgentLoop:
+ 
+         self.stop_checker = _StopChecker(max_runtime=self.max_runtime_seconds)
+ 
+-        # Create MCP servers (Claude SDK path). Grok CLI path skips in-process MCP.
++        # Create MCP servers only when provider supports in-process MCP (capability flag).
+         self.mcp_servers = {}
+-        _prov = (os.getenv("AAR_AGENT_PROVIDER") or "claude_sdk").strip().lower()
+-        if _prov not in ("grok", "grok_cli", "xai_grok"):
++        self._provider = get_agent_provider()
++        if getattr(self._provider, "supports_inprocess_mcp", False):
+             try:
+                 from .tools.server_api_tools import create_server_api_tools_server
+                 self.mcp_servers["server-api-tools"] = create_server_api_tools_server()
+@@ -430,7 +431,7 @@ class AutonomousAgentLoop:
+                 except Exception as e:
+                     print(f"[Init] Warning: prior work tools unavailable: {e}")
+         else:
+-            print("[Init] AAR_AGENT_PROVIDER=grok_cli — skipping Claude MCP servers")
++            print("[Init] provider supports_inprocess_mcp=False — skipping in-process MCP")
+ 
+         # Findings sync: disabled in local mode (no other workers)
+         self.findings_sync = None
+@@ -456,14 +457,14 @@ class AutonomousAgentLoop:
+         return self._prompt
+ 
+     def _create_agent(self, session_id: str, message_callback=None) -> BaseAgent:
+-        provider = get_agent_provider()
++        provider = getattr(self, "_provider", None) or get_agent_provider()
+         allowed_tools = [
+             "Read", "Write", "Edit", "Bash", "Glob", "Grep",
+             "WebSearch", "WebFetch",
+         ]
+         mcp_servers = self.mcp_servers
+         cli_path = None
+-        if getattr(provider, "name", "") == "claude_sdk":
++        if getattr(provider, "supports_inprocess_mcp", False):
+             allowed_tools.extend([
+                 "mcp__server-api-tools__evaluate_model",
+                 "mcp__server-api-tools__evaluate_predictions",
+@@ -477,7 +478,7 @@ class AutonomousAgentLoop:
+                 allowed_tools.append("mcp__prior-work-tools__download_snapshot")
+             cli_path = shutil.which("claude")
+         else:
+-            # Non-Claude backends: built-in tools only; research eval via Bash/scripts.
++            # External backends without in-process MCP: built-in tools only; eval via Bash.
+             mcp_servers = {}
+ 
+         return BaseAgent(
+diff --git a/aar/research_loop/provider.py b/aar/research_loop/provider.py
+index d086a17..47b3308 100644
+--- a/aar/research_loop/provider.py
++++ b/aar/research_loop/provider.py
+@@ -1,11 +1,13 @@
+ """Provider-neutral researcher-inference seam for AutonomousAgentLoop.
+ 
+-No vendor-specific imports here. Backends: claude_sdk (legacy), grok_cli (downstream).
++Built-in backend: claude_sdk only. Any other provider loads via
++AAR_AGENT_PROVIDER_MODULE (importlib) — no vendor name branches in core.
+ """
+ from __future__ import annotations
+ 
+ import importlib
+ import os
++import sys
+ from dataclasses import dataclass, field
+ from pathlib import Path
+ from typing import Any, AsyncIterator, Optional, Protocol, Union, runtime_checkable
+@@ -80,24 +82,60 @@ class AgentProvider(Protocol):
+     def session(self, options: SessionOptions) -> AgentSession: ...
+ 
+ 
++# Built-in aliases only — LEGACY_DEFAULT. No other vendor names here.
++_BUILTIN_CLAUDE = frozenset({"claude", "claude_sdk", "anthropic"})
++
++
+ def get_agent_provider(name: Optional[str] = None) -> AgentProvider:
+-    """Factory. AAR_AGENT_PROVIDER=claude_sdk|grok_cli (default claude_sdk)."""
++    """Factory.
++
++    LEGACY_DEFAULT: AAR_AGENT_PROVIDER in {claude,claude_sdk,anthropic} (default)
++      → ClaudeSDKProvider
++    EXTERNAL_PLUGIN: any other name (or when AAR_AGENT_PROVIDER_MODULE is set)
++      → require AAR_AGENT_PROVIDER_MODULE; optional PATH / CLASS; get_provider() or CLASS()
++    """
+     name = (name or os.getenv("AAR_AGENT_PROVIDER") or "claude_sdk").strip().lower()
+-    if name in ("claude", "claude_sdk", "anthropic"):
++    mod_path = (os.getenv("AAR_AGENT_PROVIDER_MODULE") or "").strip()
++
++    if name in _BUILTIN_CLAUDE and not mod_path:
+         from aar.research_loop.providers.claude_sdk import ClaudeSDKProvider
+         return ClaudeSDKProvider()
+-    if name in ("grok", "grok_cli", "xai_grok"):
+-        mod_path = os.getenv(
+-            "AAR_GROK_PROVIDER_MODULE",
+-            "aar_xai_adapter_001.provider.grok_cli",
++
++    # EXTERNAL_PLUGIN path — module required; no vendor-specific defaults
++    if not mod_path:
++        raise ProviderError(
++            f"unknown AAR_AGENT_PROVIDER={name!r}: set AAR_AGENT_PROVIDER_MODULE "
++            f"to a dotted module exporting get_provider() or AAR_AGENT_PROVIDER_CLASS",
++            code="PROVIDER_MODULE_REQUIRED",
+         )
+-        # Ensure downstream/poc is on path for aar_xai_adapter_001
+-        poc_root = Path(__file__).resolve().parents[2] / "downstream" / "poc"
+-        import sys
+-        if str(poc_root) not in sys.path:
+-            sys.path.insert(0, str(poc_root))
++
++    extra_path = (os.getenv("AAR_AGENT_PROVIDER_PATH") or "").strip()
++    if extra_path:
++        p = str(Path(extra_path).resolve())
++        if p not in sys.path:
++            sys.path.insert(0, p)
++
++    try:
+         mod = importlib.import_module(mod_path)
+-        if hasattr(mod, "get_provider"):
+-            return mod.get_provider()
+-        return mod.GrokCLIProvider()
+-    raise ProviderError(f"unknown AAR_AGENT_PROVIDER={name!r}", code="UNKNOWN_PROVIDER")
++    except ImportError as e:
++        raise ProviderError(
++            f"failed to import AAR_AGENT_PROVIDER_MODULE={mod_path!r}: {e}",
++            code="PROVIDER_IMPORT_FAILED",
++        ) from e
++
++    if hasattr(mod, "get_provider") and callable(mod.get_provider):
++        return mod.get_provider()
++
++    cls_name = (os.getenv("AAR_AGENT_PROVIDER_CLASS") or "").strip()
++    if cls_name:
++        if not hasattr(mod, cls_name):
++            raise ProviderError(
++                f"module {mod_path!r} has no class {cls_name!r}",
++                code="PROVIDER_CLASS_MISSING",
++            )
++        return getattr(mod, cls_name)()
++
++    raise ProviderError(
++        f"module {mod_path!r} has neither get_provider() nor AAR_AGENT_PROVIDER_CLASS",
++        code="PROVIDER_FACTORY_MISSING",
++    )
+diff --git a/aar/research_loop/providers/__init__.py b/aar/research_loop/providers/__init__.py
+index ed16472..9bad328 100644
+--- a/aar/research_loop/providers/__init__.py
++++ b/aar/research_loop/providers/__init__.py
+@@ -1 +1 @@
+-"""Built-in researcher inference backends (Claude). Grok lives downstream."""
++"""Built-in researcher inference backends (claude_sdk). External providers load via AAR_AGENT_PROVIDER_MODULE."""
+diff --git a/aar/research_loop/providers/claude_sdk.py b/aar/research_loop/providers/claude_sdk.py
+index 7e42a63..641e176 100644
+--- a/aar/research_loop/providers/claude_sdk.py
++++ b/aar/research_loop/providers/claude_sdk.py
+@@ -90,6 +90,8 @@ class ClaudeSDKSession:
+ 
+ class ClaudeSDKProvider:
+     name = "claude_sdk"
++    requires_anthropic_key = True
++    supports_inprocess_mcp = True
+ 
+     def session(self, options: SessionOptions) -> ClaudeSDKSession:
+         return ClaudeSDKSession(options)
+diff --git a/run.py b/run.py
+index 4c9d844..2091593 100644
+--- a/run.py
++++ b/run.py
+@@ -30,11 +30,15 @@ def cmd_agent(args, remaining):
+     """Launch autonomous research agent."""
+     import asyncio
+ 
+-    provider = (os.getenv("AAR_AGENT_PROVIDER") or "claude_sdk").strip().lower()
+-    # Grok CLI uses local OIDC via official grok binary — no Anthropic key.
+-    if provider not in ("grok", "grok_cli", "xai_grok"):
++    from aar.research_loop.provider import get_agent_provider, ProviderError
++    try:
++        _prov = get_agent_provider()
++    except ProviderError as e:
++        print(f"Error: provider load failed: {e}")
++        sys.exit(1)
++    if getattr(_prov, "requires_anthropic_key", True):
+         if not os.getenv("ANTHROPIC_API_KEY"):
+-            print("Error: ANTHROPIC_API_KEY is required for agent mode")
++            print("Error: ANTHROPIC_API_KEY is required for this provider")
+             sys.exit(1)
+ 
+     local_mode = getattr(args, 'local', False)

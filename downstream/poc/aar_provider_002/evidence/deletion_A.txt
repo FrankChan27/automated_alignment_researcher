@@ -1,0 +1,35 @@
+=== A BASELINE (enter loop.run) ===
+HARNESS_PROVIDER fast_stub aar_provider_002.providers.fast_stub
+[Init] provider supports_inprocess_mcp=False — skipping in-process MCP
+ENTERED_LOOP_RUN
+
+============================================================
+Autonomous Agent Loop (local mode)
+  Run ID: provider002-20260928-094436
+  Idea: live_deletion (live-deletion)
+  Max Runtime: 0.0h
+  Max Iterations: 1
+============================================================
+
+
+[Session 0] session_000_live_deletion_20260928_101255
+[10:12:55] [autonomous-session_000_live_deletion_20260928_101255] FAST_STUB_SESSION_OK
+[10:12:55] [autonomous-session_000_live_deletion_20260928_101255] Done
+[Session 0] Completed
+
+[Loop] Stopping: reached max iterations (1)
+
+============================================================
+Done: 1 sessions, 0.0h, reason=unknown
+============================================================
+
+LOOP_DONE {"run_id": "provider002-20260928-094436", "idea_uid": "live-deletion", "idea_name": "live_deletion", "sessions": 1, "duration_seconds": 0.0005099773406982422, "stop_reason": "unknown"}
+A_BASELINE_EXIT=0
+=== A AFTER CORE DELETE ===
+Traceback (most recent call last):
+  File "/tmp/aar_provider002_deletion_ImSW/A/downstream/poc/aar_provider_002/scripts/live_deletion_harness.py", line 15, in <module>
+    from aar.research_loop.agent import AutonomousAgentLoop
+ModuleNotFoundError: No module named 'aar.research_loop.agent'
+A_AFTER_EXIT=1
+UPSTREAM_LOOP_DELETION_BREAKS_RUN=true
+A_LIVE_PROOF=true

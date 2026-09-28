@@ -1,0 +1,2 @@
+CLAUDE_GATE 0 claude_requires_key 
+EXTERNAL_GATE 0 external_no_key_ok grok_cli 

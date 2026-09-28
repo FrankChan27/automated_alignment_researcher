@@ -1,1 +1,1 @@
-"""Built-in researcher inference backends (Claude). Grok lives downstream."""
+"""Built-in researcher inference backends (claude_sdk). External providers load via AAR_AGENT_PROVIDER_MODULE."""

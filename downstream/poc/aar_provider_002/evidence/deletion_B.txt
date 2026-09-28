@@ -1,0 +1,68 @@
+=== B BASELINE (enter loop.run) ===
+HARNESS_PROVIDER fast_stub aar_provider_002.providers.fast_stub
+[Init] provider supports_inprocess_mcp=False — skipping in-process MCP
+ENTERED_LOOP_RUN
+
+============================================================
+Autonomous Agent Loop (local mode)
+  Run ID: provider002-20260928-094436
+  Idea: live_deletion (live-deletion)
+  Max Runtime: 0.0h
+  Max Iterations: 1
+============================================================
+
+
+[Session 0] session_000_live_deletion_20260928_101256
+[10:12:56] [autonomous-session_000_live_deletion_20260928_101256] FAST_STUB_SESSION_OK
+[10:12:56] [autonomous-session_000_live_deletion_20260928_101256] Done
+[Session 0] Completed
+
+[Loop] Stopping: reached max iterations (1)
+
+============================================================
+Done: 1 sessions, 0.0h, reason=unknown
+============================================================
+
+LOOP_DONE {"run_id": "provider002-20260928-094436", "idea_uid": "live-deletion", "idea_name": "live_deletion", "sessions": 1, "duration_seconds": 0.0005359649658203125, "stop_reason": "unknown"}
+B_BASELINE_EXIT=0
+=== B AFTER PROVIDER DELETE ===
+Traceback (most recent call last):
+  File "/tmp/aar_provider002_deletion_ImSW/B/aar/research_loop/provider.py", line 119, in get_agent_provider
+    mod = importlib.import_module(mod_path)
+  File "/usr/lib/python3.13/importlib/__init__.py", line 88, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1310, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+  File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1324, in _find_and_load_unlocked
+ModuleNotFoundError: No module named 'aar_provider_002.providers'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/tmp/aar_provider002_deletion_ImSW/B/downstream/poc/aar_provider_002/scripts/live_deletion_harness.py", line 45, in <module>
+    raise SystemExit(asyncio.run(main()))
+                     ~~~~~~~~~~~^^^^^^^^
+  File "/usr/lib/python3.13/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "/usr/lib/python3.13/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/usr/lib/python3.13/asyncio/base_events.py", line 725, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/tmp/aar_provider002_deletion_ImSW/B/downstream/poc/aar_provider_002/scripts/live_deletion_harness.py", line 23, in main
+    prov = get_agent_provider()
+  File "/tmp/aar_provider002_deletion_ImSW/B/aar/research_loop/provider.py", line 121, in get_agent_provider
+    raise ProviderError(
+    ...<2 lines>...
+    ) from e
+aar.research_loop.provider.ProviderError: failed to import AAR_AGENT_PROVIDER_MODULE='aar_provider_002.providers.fast_stub': No module named 'aar_provider_002.providers'
+B_AFTER_EXIT=1
+EXTERNAL_PROVIDER_DELETION_BREAKS_RUN=true
+B_LIVE_PROOF=true

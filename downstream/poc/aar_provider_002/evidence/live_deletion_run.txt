@@ -1,0 +1,1 @@
+SCRATCH=/tmp/aar_provider002_deletion_ImSW

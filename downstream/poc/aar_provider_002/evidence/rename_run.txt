@@ -1,0 +1,25 @@
+HARNESS_PROVIDER neutral_plugin aar_provider_002.providers.neutral_plugin
+[Init] provider supports_inprocess_mcp=False — skipping in-process MCP
+ENTERED_LOOP_RUN
+
+============================================================
+Autonomous Agent Loop (local mode)
+  Run ID: provider002-20260928-094436
+  Idea: live_deletion (live-deletion)
+  Max Runtime: 0.0h
+  Max Iterations: 1
+============================================================
+
+
+[Session 0] session_000_live_deletion_20260928_101307
+[10:13:07] [autonomous-session_000_live_deletion_20260928_101307] FAST_STUB_SESSION_OK
+[10:13:07] [autonomous-session_000_live_deletion_20260928_101307] Done
+[Session 0] Completed
+
+[Loop] Stopping: reached max iterations (1)
+
+============================================================
+Done: 1 sessions, 0.0h, reason=unknown
+============================================================
+
+LOOP_DONE {"run_id": "provider002-20260928-094436", "idea_uid": "live-deletion", "idea_name": "live_deletion", "sessions": 1, "duration_seconds": 0.00042438507080078125, "stop_reason": "unknown"}

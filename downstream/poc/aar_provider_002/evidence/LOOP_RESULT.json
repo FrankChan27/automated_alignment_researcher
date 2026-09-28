@@ -1,0 +1,26 @@
+{
+  "run_id": "provider002-20260928-094436",
+  "idea_uid": "aar-provider-002-8d",
+  "idea_name": "poc002_8d_vector",
+  "sessions": 6,
+  "stop_reason": "max_iterations",
+  "HASH_CHAIN_OK": true,
+  "PROVIDER_MODULE": "aar_provider_002.providers.grok_cli",
+  "PROVIDER_NAME": "grok_cli",
+  "CORE_VENDOR_KNOWLEDGE": false,
+  "API_KEY_USED": false,
+  "ANTHROPIC_USED": false,
+  "RESEARCHER_TRANSPORT": "grok_cli_oidc",
+  "NOTE": "Trace spans initial run (iters 0-2) + continuation (iters 3-5) same RUN_ID; continuation LOOP_RESULT sessions=3 merged here.",
+  "continuation_raw": {
+    "run_id": "provider002-20260928-094436",
+    "idea_uid": "aar-provider-002-8d",
+    "idea_name": "poc002_8d_vector",
+    "sessions": 3,
+    "duration_seconds": 783.6128866672516,
+    "stop_reason": "max_iterations",
+    "RUN_ID": "provider002-20260928-094436",
+    "PROVIDER_MODULE": "aar_provider_002.providers.grok_cli",
+    "CORE_VENDOR_KNOWLEDGE": false
+  }
+}

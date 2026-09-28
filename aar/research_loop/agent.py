@@ -2,7 +2,8 @@
 Autonomous W2S research agent.
 
 Uses a provider-neutral seam (aar.research_loop.provider) so researcher
-inference can run via Claude Agent SDK or an alternate backend (e.g. grok CLI).
+inference can run via the built-in Claude Agent SDK or an external plugin
+loaded by AAR_AGENT_PROVIDER_MODULE (capability flags, not vendor name branches).
 Merges agent_loop, base_agent, and stop_conditions into a single file.
 """
 
@@ -47,7 +48,7 @@ from aar.config import (
     SERVER_URL,
     AAR_MODE,
 )
-# MCP tool servers import claude_agent_sdk — load lazily only for claude_sdk provider.
+# MCP tool servers import claude_agent_sdk — load lazily when provider.supports_inprocess_mcp.
 from .tools.findings_sync import FindingsSync
 
 
@@ -414,10 +415,10 @@ class AutonomousAgentLoop:
 
         self.stop_checker = _StopChecker(max_runtime=self.max_runtime_seconds)
 
-        # Create MCP servers (Claude SDK path). Grok CLI path skips in-process MCP.
+        # Create MCP servers only when provider supports in-process MCP (capability flag).
         self.mcp_servers = {}
-        _prov = (os.getenv("AAR_AGENT_PROVIDER") or "claude_sdk").strip().lower()
-        if _prov not in ("grok", "grok_cli", "xai_grok"):
+        self._provider = get_agent_provider()
+        if getattr(self._provider, "supports_inprocess_mcp", False):
             try:
                 from .tools.server_api_tools import create_server_api_tools_server
                 self.mcp_servers["server-api-tools"] = create_server_api_tools_server()
@@ -430,7 +431,7 @@ class AutonomousAgentLoop:
                 except Exception as e:
                     print(f"[Init] Warning: prior work tools unavailable: {e}")
         else:
-            print("[Init] AAR_AGENT_PROVIDER=grok_cli — skipping Claude MCP servers")
+            print("[Init] provider supports_inprocess_mcp=False — skipping in-process MCP")
 
         # Findings sync: disabled in local mode (no other workers)
         self.findings_sync = None
@@ -456,14 +457,14 @@ class AutonomousAgentLoop:
         return self._prompt
 
     def _create_agent(self, session_id: str, message_callback=None) -> BaseAgent:
-        provider = get_agent_provider()
+        provider = getattr(self, "_provider", None) or get_agent_provider()
         allowed_tools = [
             "Read", "Write", "Edit", "Bash", "Glob", "Grep",
             "WebSearch", "WebFetch",
         ]
         mcp_servers = self.mcp_servers
         cli_path = None
-        if getattr(provider, "name", "") == "claude_sdk":
+        if getattr(provider, "supports_inprocess_mcp", False):
             allowed_tools.extend([
                 "mcp__server-api-tools__evaluate_model",
                 "mcp__server-api-tools__evaluate_predictions",
@@ -477,7 +478,7 @@ class AutonomousAgentLoop:
                 allowed_tools.append("mcp__prior-work-tools__download_snapshot")
             cli_path = shutil.which("claude")
         else:
-            # Non-Claude backends: built-in tools only; research eval via Bash/scripts.
+            # External backends without in-process MCP: built-in tools only; eval via Bash.
             mcp_servers = {}
 
         return BaseAgent(

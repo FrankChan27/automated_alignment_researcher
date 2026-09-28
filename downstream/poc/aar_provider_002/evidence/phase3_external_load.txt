@@ -1,0 +1,4 @@
+EXTERNAL_LOAD_OK grok_cli aar_provider_002.providers.grok_cli
+AUTH_JSON_PRESENT True
+auth_mode oidc
+HAS_KEY_FIELD True

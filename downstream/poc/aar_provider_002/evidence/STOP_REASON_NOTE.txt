@@ -1,0 +1,6 @@
+RAW loop print (continuation): "Done: 3 sessions, 0.2h, reason=unknown"
+NORMALIZED evidence/LOOP_RESULT.json stop_reason=max_iterations
+(Reason: AutonomousAgentLoop still emits unknown in some print paths when max_iterations fires;
+ we do NOT rewrite scheduler/stop policy; LOOP_RESULT documents the authoritative stop as max_iterations
+ because [Loop] Stopping: reached max iterations appeared in LOOP_5ITER.txt.)
+EXIT: CONT_EXIT=0 (raw in PHASE4_run_meta.txt / LOOP_5ITER.txt)
