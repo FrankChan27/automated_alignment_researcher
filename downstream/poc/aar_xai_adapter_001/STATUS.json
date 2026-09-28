@@ -1,20 +1,23 @@
 {
   "MISSION": "AAR-xAI-adapter-001",
-  "PHASE": "0",
+  "PHASE": "2",
   "PHASES_COMPLETE": [
-    "0"
+    "0",
+    "1",
+    "2"
   ],
   "CLAUDE_COUPLING_DEPTH": "DEEP",
   "PROVIDER_INTERFACE_EXISTS": false,
-  "CORE_FILES_INVOLVED": [
-    "run.py",
-    "aar/research_loop/agent.py",
-    "aar/research_loop/tools/server_api_tools.py",
-    "aar/research_loop/tools/prior_work_tools.py",
-    "aar/research_loop/monitor.py"
-  ],
+  "MIN_PROVIDER_SEAM": "contracted_placement_locked",
+  "UPSTREAM_SEMANTICS_PRESERVED": "design_intent",
+  "GROK_PROVIDER_RUNTIME": "planned_grok_cli_oidc",
+  "CORE_SEAM_PATH": "aar/research_loop/provider.py",
+  "GROK_BACKEND_PATH": "downstream/poc/aar_xai_adapter_001/provider/grok_cli.py",
   "CLAUDE_COUPLING_MAP": "downstream/poc/aar_xai_adapter_001/CLAUDE_COUPLING_MAP.md",
+  "MIN_PROVIDER_CONTRACT": "downstream/poc/aar_xai_adapter_001/MIN_PROVIDER_CONTRACT.md",
+  "SEAM_PLACEMENT": "downstream/poc/aar_xai_adapter_001/SEAM_PLACEMENT.md",
   "UNPATCHED_ENTRY": "BLOCKED",
+  "GROK_MODELS_PROBE": "PASS",
   "READY_FOR_UPSTREAM_LOOP_VIA_GROK_CLI": false,
   "CAN_AAR_NATIVE_RESEARCH_LOOP_RUN_WITH_XAI_OAUTH": null,
   "BASE_SHA": "00ba33b51d6b78cbb0844268fc437d64cd6e0c31",
@@ -26,5 +29,6 @@
   "CURSOR_USED": false,
   "ANTHROPIC_USED": false,
   "API_KEY_USED": false,
-  "timestamp_utc8": "2026-09-28T09:05:00+0800"
+  "IMPLEMENTATION_STARTED": false,
+  "timestamp_utc8": "2026-09-28T09:06:34+0800"
 }
