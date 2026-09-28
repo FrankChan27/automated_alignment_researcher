@@ -242,6 +242,16 @@ For **Task A** you run only the bottom-right path (`publish_suite` → `run_eval
 Canonical product / runtime / provider connectivity status: [`docs/PROVIDER_CONNECTIVITY.md`](docs/PROVIDER_CONNECTIVITY.md).  
 Product entry, Agent runtime, Provider, transport, and authentication are tracked separately.
 
+**ARCHITECTURE_STATUS:** vendor-neutral Provider seam is on `main` (`aar/research_loop/provider.py`).
+Core knows only the Provider contract, selection, lifecycle, and results/events.
+External researchers load via `AAR_AGENT_PROVIDER_MODULE` (optional `AAR_AGENT_PROVIDER_PATH` /
+`AAR_AGENT_PROVIDER_CLASS`) without modifying `AutonomousAgentLoop`.
+Legacy default remains Claude Agent SDK (`claude` / `claude_sdk` / `anthropic`).
+
+**PRODUCT_CONNECTIVITY_STATUS:** see the registry matrix — do not infer product CONNECTED
+from architecture alone. Runtime-specific adapters (e.g. Grok Bot sand gateway) live under
+`aar/integrations/providers/` and are **not** a public stable API.
+
 ## 8. Troubleshooting
 
 - **`401` / gated dataset or model:** set `HF_TOKEN` and accept the model/dataset license on Hugging Face

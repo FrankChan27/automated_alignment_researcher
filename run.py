@@ -30,9 +30,16 @@ def cmd_agent(args, remaining):
     """Launch autonomous research agent."""
     import asyncio
 
-    if not os.getenv("ANTHROPIC_API_KEY"):
-        print("Error: ANTHROPIC_API_KEY is required for agent mode")
+    from aar.research_loop.provider import get_agent_provider, ProviderError
+    try:
+        _prov = get_agent_provider()
+    except ProviderError as e:
+        print(f"Error: provider load failed: {e}")
         sys.exit(1)
+    if getattr(_prov, "requires_anthropic_key", True):
+        if not os.getenv("ANTHROPIC_API_KEY"):
+            print("Error: ANTHROPIC_API_KEY is required for this provider")
+            sys.exit(1)
 
     local_mode = getattr(args, 'local', False)
 
