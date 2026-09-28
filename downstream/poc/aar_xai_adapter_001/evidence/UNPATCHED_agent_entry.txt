@@ -1,0 +1,10 @@
+# UNPATCHED agent entry probe — AAR-xAI-adapter-001 PHASE 0
+timestamp_utc8=2026-09-28T09:05:13+0800
+HEAD=6db02ee35182f7016f424f21e2f44fd54c3f06c3
+PINNED_UPSTREAM_SHA=02dbe9d2cadc553720d17cdf6259c0b8727e6cde
+ANTHROPIC_API_KEY_SET=
+ANTHROPIC_API_KEY_SET=false
+---
+CMD: python run.py agent --idea-uid probe-uid --idea-name probe --local --max-iterations 1
+Error: ANTHROPIC_API_KEY is required for agent mode
+EXIT=1
