@@ -110,7 +110,7 @@ Flags from primary OIDC path: `ANTHROPIC_USED=false`, `API_KEY_USED=false`, `CUR
 
 **EVIDENCE_CONFLICT (preserved):**
 
-1. AUTH split — OIDC freexes claim `API_KEY_USED=false`; smoke-v3 required platform `XAI_API_KEY` when OIDC alone failed for CLI chat-proxy. Register AUTH as multi-valued; do **not** assert “OIDC always sufficient.”
+1. AUTH split — OIDC freezes claim `API_KEY_USED=false`; smoke-v3 required platform `XAI_API_KEY` when OIDC alone failed for CLI chat-proxy. Register AUTH as multi-valued; do **not** assert “OIDC always sufficient.”
 2. STATE advancement semantics differ across smokes (provider-002 TRACE / smoke-v3 mutates `STATE.json` history; contrast Grok入口 below).
 
 ---
