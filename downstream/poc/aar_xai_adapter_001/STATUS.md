@@ -1,0 +1,9 @@
+# AAR-xAI-adapter-001
+
+Status: PHASE 0 starting
+
+BASE_SHA=00ba33b51d6b78cbb0844268fc437d64cd6e0c31
+PINNED_UPSTREAM_SHA=02dbe9d2cadc553720d17cdf6259c0b8727e6cde
+BRANCH=downstream/aar-xai-adapter-001
+GROK_VERSION=1.0.41
+AUTH_MODE=oidc
