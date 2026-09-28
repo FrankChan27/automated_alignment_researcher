@@ -1,0 +1,12 @@
+{
+  "provider_name": "grok_bot_gateway",
+  "provider_module": "aar_grok_bot_smoke.providers.grok_bot_gateway",
+  "requires_anthropic_key": false,
+  "supports_inprocess_mcp": false,
+  "researcher_agent_id": "fac98a36-f560-43b8-9ac8-1ddacbbd16ed",
+  "marker_expected": "GROK_BOT_AAR_PROVIDER_OK",
+  "auth_mechanism": "grok_bot_sand_gateway_bearer",
+  "oauth_used": false,
+  "xai_api_key_used": false,
+  "anthropic_used": false
+}

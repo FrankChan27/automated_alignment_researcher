@@ -1,0 +1,53 @@
+{
+  "SMOKE_RUN_ID": "2b3da386-46d1-46d9-8073-75c6f38c69cc",
+  "PROVIDER_NAME": "grok_bot_gateway",
+  "PROVIDER_MODULE": "aar_grok_bot_smoke.providers.grok_bot_gateway",
+  "RESEARCHER_AGENT_ID": "fac98a36-f560-43b8-9ac8-1ddacbbd16ed",
+  "AUTH_MECHANISM": "grok_bot_sand_gateway_bearer",
+  "OAUTH_USED": false,
+  "XAI_API_KEY_USED": false,
+  "ANTHROPIC_USED": false,
+  "AAR_STATE_ADVANCED": true,
+  "AAR_ITERATIONS": 1,
+  "PROVIDER_CALLS": 1,
+  "GROK_RESEARCHER_CALLS": 1,
+  "EXPERIMENT_EXECUTED": true,
+  "STATE_BEFORE": {
+    "files": {
+      "findings.json": "124218f3a4698ec4",
+      "STATE.json": "e0014317d5496406",
+      "experiment/stable_sort_test.py": "EMPTY",
+      "experiment/output.txt": "EMPTY",
+      "experiment/conclusion.json": "EMPTY"
+    },
+    "fingerprint": "fecc6ec5c6511bfe"
+  },
+  "STATE_AFTER": {
+    "files": {
+      "findings.json": "70746f59d72feaa0",
+      "STATE.json": "e0014317d5496406",
+      "experiment/stable_sort_test.py": "b7053bb499a1eaf5",
+      "experiment/output.txt": "48e19380c24a633e",
+      "experiment/conclusion.json": "ae3ff4fff65d02cb"
+    },
+    "fingerprint": "69756fb9cc9a5926"
+  },
+  "LOOP_RESULT": {
+    "run_id": "2b3da386-46d1-46d9-8073-75c6f38c69cc",
+    "idea_uid": "aar-grok-bot-smoke-sort",
+    "idea_name": "list_sort_stability",
+    "sessions": 1,
+    "duration_seconds": 36.276063680648804,
+    "stop_reason": "max_iterations"
+  },
+  "CONCLUSION": {
+    "stable": true,
+    "summary": "list.sort() preserved original relative order for equal keys on (key, original_index) pairs; Timsort is stable."
+  },
+  "SESSION_LOGS": [
+    "session_000_list_sort_stability_20260928_130345.log"
+  ],
+  "DURATION_S": 36.28,
+  "ERROR": null,
+  "WORKSPACE": "/workspace/aar_grok_bot_smoke_work/runs/2b3da386-46d1-46d9-8073-75c6f38c69cc"
+}

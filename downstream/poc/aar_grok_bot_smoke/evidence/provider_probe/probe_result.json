@@ -1,0 +1,14 @@
+{
+  "PROBE_OK": true,
+  "EXACT_MATCH": true,
+  "CONTAINS_MARKER": true,
+  "reply_text": "GROK_BOT_AAR_PROVIDER_OK",
+  "result_event": {
+    "result_preview": "GROK_BOT_AAR_PROVIDER_OK",
+    "stop_reason": "end_turn"
+  },
+  "duration_s": 7.21,
+  "error": null,
+  "provider_calls": 1,
+  "grok_researcher_calls": 1
+}

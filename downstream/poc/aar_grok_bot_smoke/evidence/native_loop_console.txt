@@ -1,0 +1,40 @@
+PROVIDER grok_bot_gateway requires_anthropic_key= False module= aar_grok_bot_smoke.providers.grok_bot_gateway
+[Init] provider supports_inprocess_mcp=False — skipping in-process MCP
+
+============================================================
+Autonomous Agent Loop (local mode)
+  Run ID: 2b3da386-46d1-46d9-8073-75c6f38c69cc
+  Idea: list_sort_stability (aar-grok-bot-smoke-sort)
+  Max Runtime: 0.3h
+  Max Iterations: 1
+============================================================
+
+
+[Session 0] session_000_list_sort_stability_20260928_130345
+[13:04:21] [autonomous-session_000_list_sort_stability_20260928_130345] Running a minimal stable-sort experiment under the smoke workspace now.
+
+Experiment ran: sort kept equal-key order. Writing conclusion and findings next.
+
+Python list.sort() is stable: equal keys kept
+[13:04:21] [autonomous-session_000_list_sort_stability_20260928_130345] Done
+[Session 0] Completed
+
+[Loop] Stopping: reached max iterations (1)
+
+============================================================
+Done: 1 sessions, 0.0h, reason=unknown
+============================================================
+
+SMOKE_SUMMARY {
+  "SMOKE_RUN_ID": "2b3da386-46d1-46d9-8073-75c6f38c69cc",
+  "AAR_STATE_ADVANCED": true,
+  "AAR_ITERATIONS": 1,
+  "PROVIDER_CALLS": 1,
+  "GROK_RESEARCHER_CALLS": 1,
+  "EXPERIMENT_EXECUTED": true,
+  "CONCLUSION": {
+    "stable": true,
+    "summary": "list.sort() preserved original relative order for equal keys on (key, original_index) pairs; Timsort is stable."
+  },
+  "ERROR": null
+}

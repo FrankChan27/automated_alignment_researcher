@@ -1,0 +1,4 @@
+{
+  "stable": true,
+  "summary": "list.sort() preserved original relative order for equal keys on (key, original_index) pairs; Timsort is stable."
+}

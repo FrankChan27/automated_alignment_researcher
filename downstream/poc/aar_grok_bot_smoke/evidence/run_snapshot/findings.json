@@ -1,0 +1,10 @@
+{
+  "findings": [
+    {
+      "title": "list.sort stability",
+      "stable": true,
+      "evidence": "experiment/output.txt"
+    }
+  ],
+  "mission": "aar_grok_bot_smoke"
+}

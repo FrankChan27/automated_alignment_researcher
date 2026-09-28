@@ -1,0 +1,10 @@
+{
+  "files": {
+    "findings.json": "124218f3a4698ec4",
+    "STATE.json": "e0014317d5496406",
+    "experiment/stable_sort_test.py": "EMPTY",
+    "experiment/output.txt": "EMPTY",
+    "experiment/conclusion.json": "EMPTY"
+  },
+  "fingerprint": "fecc6ec5c6511bfe"
+}
