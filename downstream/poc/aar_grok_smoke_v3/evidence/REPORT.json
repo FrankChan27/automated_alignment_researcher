@@ -1,0 +1,22 @@
+{
+  "SMOKE_RUN_ID": "smoke-v3-03e61ba630",
+  "conclusion": "Python sorted() is stable on the minimal example",
+  "stable": true,
+  "AAR_LOOP_EXECUTED": true,
+  "AAR_RESEARCHER_EXECUTED": true,
+  "AAR_STATE_ADVANCED": true,
+  "AAR_ITERATIONS": 1,
+  "PROVIDER_CALLS": 1,
+  "GROK_HTTP_CALLS": 5,
+  "MODEL": "grok-4.5",
+  "AUTH_MECHANISM": "xai_api_key_official_cli",
+  "SAW_API_X_AI": true,
+  "SAW_API_ANTHROPIC": false,
+  "stop_reason_field": "unknown",
+  "stop_reason_note": "Upstream AutonomousAgentLoop breaks on max_iterations before assigning StopReason, so the result field stays 'unknown'. Console printed 'Stopping: reached max iterations (1)' and sessions=1.",
+  "state_transition": "pending/iterations_completed=0 -> completed/iterations_completed=1",
+  "state_hash_before": "5b3db6d5fecd886f",
+  "state_hash_after": "20558d6dfdc863b4",
+  "experiment_actually_executed": true,
+  "tool_trace": "bash wrote experiment_sorted_stability.py then python3 printed RESULT/STABLE before STATE.json was rewritten"
+}

@@ -1,0 +1,18 @@
+{
+  "task": "python_sorted_stability",
+  "status": "completed",
+  "iterations_completed": 1,
+  "experiment": {
+    "script": "experiment_sorted_stability.py",
+    "observed_output": "RESULT [(1, 'b'), (1, 'd'), (2, 'a'), (2, 'c')]\nSTABLE True\n",
+    "stable": true,
+    "conclusion": "Python's built-in sorted() preserves relative order of equal keys and is therefore a stable sort."
+  },
+  "history": [
+    {
+      "iteration": 1,
+      "stable": true,
+      "observed_output": "RESULT [(1, 'b'), (1, 'd'), (2, 'a'), (2, 'c')]\nSTABLE True\n"
+    }
+  ]
+}

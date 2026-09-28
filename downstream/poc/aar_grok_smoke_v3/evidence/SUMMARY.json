@@ -1,0 +1,44 @@
+{
+  "SMOKE_RUN_ID": "smoke-v3-03e61ba630",
+  "AAR_ENGINE": "aar.research_loop.agent.AutonomousAgentLoop",
+  "AAR_LOOP_EXECUTED": true,
+  "AAR_RESEARCHER_EXECUTED": true,
+  "AAR_STATE_ADVANCED": true,
+  "AAR_ITERATIONS": 1,
+  "PROVIDER_CALLS": 1,
+  "GROK_HTTP_CALLS": 5,
+  "SAW_API_X_AI": true,
+  "SAW_API_ANTHROPIC": false,
+  "STATE_HASH_BEFORE": "5b3db6d5fecd886f",
+  "STATE_HASH_AFTER": "20558d6dfdc863b4",
+  "STATE_AFTER": {
+    "task": "python_sorted_stability",
+    "status": "completed",
+    "iterations_completed": 1,
+    "experiment": {
+      "script": "experiment_sorted_stability.py",
+      "observed_output": "RESULT [(1, 'b'), (1, 'd'), (2, 'a'), (2, 'c')]\nSTABLE True\n",
+      "stable": true,
+      "conclusion": "Python's built-in sorted() preserves relative order of equal keys and is therefore a stable sort."
+    },
+    "history": [
+      {
+        "iteration": 1,
+        "stable": true,
+        "observed_output": "RESULT [(1, 'b'), (1, 'd'), (2, 'a'), (2, 'c')]\nSTABLE True\n"
+      }
+    ]
+  },
+  "LOOP_RESULT": {
+    "run_id": "smoke-v3-03e61ba630",
+    "idea_uid": "aar-smoke-v3-sorted-stability",
+    "idea_name": "sorted_stability",
+    "sessions": 1,
+    "duration_seconds": 17.901298761367798,
+    "stop_reason": "unknown"
+  },
+  "SESSION_ERROR": null,
+  "AUTH_MECHANISM": "xai_api_key_official_cli",
+  "MODELS_OBSERVED": [],
+  "RUNS_DIR": "/tmp/smoke-v3-03e61ba630"
+}
