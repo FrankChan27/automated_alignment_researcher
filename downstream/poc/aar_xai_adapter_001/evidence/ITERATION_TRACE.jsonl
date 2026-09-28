@@ -1,0 +1,1 @@
+{"ITERATION": 0, "MODEL": "grok-4.7", "PROPOSAL": [50, 50, 50, 50, 50, 50, 50, 50], "SCORE": 0.0, "STATE_HASH_BEFORE": "615e86f2ad54f684", "STATE_HASH_AFTER": "d38b6025b383991e", "RECOVERED_FAILURE": false, "ERROR": null, "PROVIDER": "grok_cli", "API_KEY_USED": false}

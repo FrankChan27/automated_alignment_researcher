@@ -1,0 +1,7 @@
+AAR_AGENT_PROVIDER=grok_cli
+ANTHROPIC_API_KEY unset for researcher runs
+ANTHROPIC_USED=false
+RESEARCHER_TRANSPORT=grok_cli_oidc
+run.py skips ANTHROPIC_API_KEY gate when provider is grok_cli
+GrokCLIProvider strips ANTHROPIC_API_KEY/XAI_API_KEY from subprocess env
+ClaudeSDKProvider only loaded when AAR_AGENT_PROVIDER=claude_sdk (baseline; not used this mission)

@@ -155,16 +155,24 @@ class GrokCLISession:
                 code="AUTH_EXPIRED",
                 retryable=False,
             )
-        if code != 0:
+        text = stdout.strip() or stderr.strip() or ""
+        # Max-turns is a CLI budget stop, not an auth/transport failure. If we got
+        # model output, complete the AAR session successfully so the upstream loop
+        # can advance (still official grok CLI + OIDC; no Anthropic).
+        max_turns_stop = code != 0 and "max turns" in combined_low
+        if code != 0 and not (max_turns_stop and text):
             raise ProviderError(
                 f"grok CLI exited {code}: {(stderr or stdout)[:500]}",
                 code="GROK_CLI_NONZERO",
                 retryable=False,
             )
-
-        text = stdout.strip() or stderr.strip() or "(empty grok output)"
+        if not text:
+            text = "(empty grok output)"
         yield AssistantEvent(content=[TextPart(text=text)])
-        yield ResultEvent(result=text, stop_reason="end_turn")
+        yield ResultEvent(
+            result=text,
+            stop_reason="max_turns" if max_turns_stop else "end_turn",
+        )
 
 
 class GrokCLIProvider:

@@ -1,0 +1,16 @@
+{
+  "MISSION": "AAR-xAI-adapter-001",
+  "BRANCH": "downstream/aar-xai-adapter-001",
+  "HEAD": "bfda3be8e05bf9a38f06ed4c03fc6ffaf371d407",
+  "BASE_SHA": "00ba33b51d6b78cbb0844268fc437d64cd6e0c31",
+  "PINNED_UPSTREAM_SHA": "02dbe9d2cadc553720d17cdf6259c0b8727e6cde",
+  "GROK_VERSION": "1.0.41",
+  "MODEL": "grok-4.7",
+  "AUTH_MODE": "oidc",
+  "RESEARCHER_TRANSPORT": "grok_cli_oidc",
+  "ANTHROPIC_USED": false,
+  "API_KEY_USED": false,
+  "CURSOR_USED": false,
+  "OAUTH_SECRET_IN_REPO": false,
+  "timestamp_utc8": "2026-09-28T09:25:32+0800"
+}

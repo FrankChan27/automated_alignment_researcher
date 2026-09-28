@@ -1,0 +1,13 @@
+{
+  "SYNTHETIC_NONZERO": true,
+  "PROVIDER_ERROR": {
+    "code": "GROK_CLI_NONZERO",
+    "retryable": false,
+    "msg": "grok CLI exited 42: synthetic provider failure\n"
+  },
+  "FAILURE_PROPAGATION_CORRECT": true,
+  "LOOP_STATE_CORRUPTED": false,
+  "RECOVERY_SUPPORTED": true,
+  "OAUTH_INTACT": true,
+  "RECOVERY_OUTPUT_CONTAINS_OK": true
+}
