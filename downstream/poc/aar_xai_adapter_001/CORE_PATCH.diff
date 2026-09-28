@@ -1,0 +1,574 @@
+diff --git a/aar/research_loop/agent.py b/aar/research_loop/agent.py
+index a8bbd9a..8ea87cc 100644
+--- a/aar/research_loop/agent.py
++++ b/aar/research_loop/agent.py
+@@ -1,6 +1,8 @@
+ """
+-Autonomous W2S research agent using Claude Agent SDK.
++Autonomous W2S research agent.
+ 
++Uses a provider-neutral seam (aar.research_loop.provider) so researcher
++inference can run via Claude Agent SDK or an alternate backend (e.g. grok CLI).
+ Merges agent_loop, base_agent, and stop_conditions into a single file.
+ """
+ 
+@@ -18,13 +20,15 @@ from enum import Enum
+ from pathlib import Path
+ from typing import Any, Callable, Dict, List, Optional
+ 
+-from claude_agent_sdk import (
+-    ClaudeSDKClient,
+-    ClaudeAgentOptions,
+-    AssistantMessage,
+-    ResultMessage,
+-    TextBlock,
+-    ToolUseBlock,
++from aar.research_loop.provider import (
++    AssistantEvent,
++    ProviderError,
++    ResultEvent,
++    SessionOptions,
++    TextPart,
++    ThinkingPart,
++    ToolUsePart,
++    get_agent_provider,
+ )
+ 
+ from aar.config import (
+@@ -43,8 +47,7 @@ from aar.config import (
+     SERVER_URL,
+     AAR_MODE,
+ )
+-from .tools.server_api_tools import create_server_api_tools_server
+-from .tools.prior_work_tools import create_prior_work_tools_server
++# MCP tool servers import claude_agent_sdk — load lazily only for claude_sdk provider.
+ from .tools.findings_sync import FindingsSync
+ 
+ 
+@@ -223,7 +226,7 @@ OVERLOADED_MAX_RETRIES = int(os.getenv("OVERLOADED_MAX_RETRIES", "6"))
+ # ---------------------------------------------------------------------------
+ 
+ class BaseAgent:
+-    """Wraps ClaudeSDKClient for research tasks."""
++    """Provider-neutral research agent session wrapper."""
+ 
+     def __init__(
+         self,
+@@ -236,6 +239,7 @@ class BaseAgent:
+         cli_path: Optional[str] = None,
+         message_callback: Optional[Callable] = None,
+         system_prompt: Optional[str] = None,
++        provider=None,
+     ):
+         self.name = name
+         self.allowed_tools = allowed_tools
+@@ -246,27 +250,30 @@ class BaseAgent:
+         self.cli_path = cli_path
+         self.message_callback = message_callback
+         self.system_prompt = system_prompt
++        self.provider = provider or get_agent_provider()
+ 
+     async def execute(self, task: str) -> AgentResult:
+         """Execute agent task. Returns AgentResult.
+ 
+-        If the API returns a 529 'Overloaded' error, wait OVERLOADED_WAIT_SECONDS
+-        (default 10 min) and retry the same session, up to OVERLOADED_MAX_RETRIES
+-        times — a capacity blip shouldn't burn an iteration or kill the chain.
++        If the provider returns a retryable error (e.g. Claude 529 Overloaded),
++        wait OVERLOADED_WAIT_SECONDS and retry up to OVERLOADED_MAX_RETRIES.
+         """
+         start_time = time.time()
+         overloaded_retries = 0
+ 
+         while True:
+-            iteration_count = 0
+-            messages = []
+             try:
+                 return await self._execute_once(task, start_time)
+             except Exception as e:
+-                if _is_overloaded(e) and overloaded_retries < OVERLOADED_MAX_RETRIES:
++                retryable = False
++                if isinstance(e, ProviderError):
++                    retryable = e.retryable
++                elif _is_overloaded(e):
++                    retryable = True
++                if retryable and overloaded_retries < OVERLOADED_MAX_RETRIES:
+                     overloaded_retries += 1
+                     print(
+-                        f"[{self.name}] API overloaded (529). Waiting "
++                        f"[{self.name}] Provider overloaded/retryable. Waiting "
+                         f"{OVERLOADED_WAIT_SECONDS}s before retry "
+                         f"{overloaded_retries}/{OVERLOADED_MAX_RETRIES}..."
+                     )
+@@ -281,73 +288,63 @@ class BaseAgent:
+                 )
+ 
+     async def _execute_once(self, task: str, start_time: float) -> AgentResult:
+-        """One attempt at running the session (no retry). Raises on API error so
+-        execute() can decide whether to retry (529) or give up."""
++        """One attempt at running the session (no retry). Raises on provider error."""
+         iteration_count = 0
+         messages = []
+ 
+-        if True:
+-            options_dict = {
+-                "allowed_tools": self.allowed_tools,
+-                "system_prompt": self.system_prompt,
+-                "permission_mode": self.permission_mode,
+-                "cwd": str(self.workspace),
+-                "model": self.model,
+-                "mcp_servers": self.mcp_servers,
++        options = SessionOptions(
++            allowed_tools=self.allowed_tools,
++            system_prompt=self.system_prompt,
++            permission_mode=self.permission_mode,
++            cwd=str(self.workspace),
++            model=self.model,
++            mcp_servers=self.mcp_servers,
++            cli_path=self.cli_path,
++            max_turns=int(os.getenv("AAR_PROVIDER_MAX_TURNS")) if os.getenv("AAR_PROVIDER_MAX_TURNS") else None,
++            extra={
+                 "setting_sources": ["project"],
+                 "betas": ["context-1m-2025-08-07"],
+-                # Extended thinking. Claude 4.x+ models (fable-5, opus-4.8) use ADAPTIVE thinking and
+-                # default the thinking `display` to "omitted" -> the model thinks but the summary is
+-                # withheld (empty ThinkingBlock.thinking, signature only -> empty [THINKING] in logs).
+-                # Set display="summarized" to surface the reasoning summary the session-log callback
+-                # persists. Manual `max_thinking_tokens` (=> thinking type "enabled"/budget_tokens) is
+-                # REJECTED on these models — depth is controlled by `effort` instead (default "high";
+-                # bump to xhigh/max via AAR_EFFORT).
+                 "thinking": {"type": "adaptive", "display": "summarized"},
+                 "effort": os.getenv("AAR_EFFORT", "max"),
+-            }
+-            if self.cli_path:
+-                options_dict["cli_path"] = self.cli_path
+-
+-            options = ClaudeAgentOptions(**options_dict)
+-
+-            async with ClaudeSDKClient(options=options) as client:
+-                await client.query(task)
++            },
++        )
+ 
+-                async for message in client.receive_response():
+-                    messages.append(message)
++        async with self.provider.session(options) as client:
++            await client.query(task)
+ 
+-                    # Log
+-                    log_msg = self._format_message(message)
+-                    if log_msg:
+-                        print(log_msg)
++            async for message in client.receive_response():
++                messages.append(message)
+ 
+-                    if self.message_callback:
+-                        self.message_callback(message)
++                log_msg = self._format_message(message)
++                if log_msg:
++                    print(log_msg)
+ 
+-                    if isinstance(message, ResultMessage):
+-                        break
++                if self.message_callback:
++                    self.message_callback(message)
+ 
+-                    if isinstance(message, AssistantMessage):
+-                        for content in message.content:
+-                            if isinstance(content, ToolUseBlock):
+-                                iteration_count += 1
++                if isinstance(message, ResultEvent):
++                    break
+ 
+-                return AgentResult(
+-                    success=True,
+-                    output=self._extract_output(messages),
+-                    duration=time.time() - start_time,
+-                    iteration_count=iteration_count,
+-                )
++                if isinstance(message, AssistantEvent):
++                    for content in message.content:
++                        if isinstance(content, ToolUsePart):
++                            iteration_count += 1
++
++            return AgentResult(
++                success=True,
++                output=self._extract_output(messages),
++                duration=time.time() - start_time,
++                iteration_count=iteration_count,
++            )
+ 
+     def _format_message(self, message) -> Optional[str]:
+         ts = datetime.now().strftime("%H:%M:%S")
+-        if isinstance(message, AssistantMessage):
++        if isinstance(message, AssistantEvent):
+             parts = []
+             for content in message.content:
+-                if isinstance(content, TextBlock):
++                if isinstance(content, TextPart):
+                     parts.append(f"[{ts}] [{self.name}] {content.text[:200]}")
+-                elif isinstance(content, ToolUseBlock):
++                elif isinstance(content, ToolUsePart):
+                     tool_input = content.input or {}
+                     detail = ""
+                     if content.name == "Bash":
+@@ -356,33 +353,29 @@ class BaseAgent:
+                         detail = f" {tool_input.get('file_path', '')}"
+                     parts.append(f"[{ts}] [{self.name}] -> {content.name}{detail}")
+             return "\n".join(parts) if parts else None
+-        elif isinstance(message, ResultMessage):
++        elif isinstance(message, ResultEvent):
+             return f"[{ts}] [{self.name}] Done"
+         return None
+ 
+     def _extract_output(self, messages) -> Dict[str, Any]:
+         output = {"text_outputs": [], "tool_uses": []}
+         for msg in messages:
+-            if isinstance(msg, AssistantMessage):
++            if isinstance(msg, AssistantEvent):
+                 for content in msg.content:
+-                    if isinstance(content, TextBlock):
++                    if isinstance(content, TextPart):
+                         output["text_outputs"].append(content.text)
+-                    elif isinstance(content, ToolUseBlock):
++                    elif isinstance(content, ToolUsePart):
+                         output["tool_uses"].append({"tool": content.name, "input": content.input})
+-            if isinstance(msg, ResultMessage):
++            if isinstance(msg, ResultEvent):
+                 output["result_message"] = msg.result
+         return output
+ 
+ 
+-# ---------------------------------------------------------------------------
+-# Main autonomous loop
+-# ---------------------------------------------------------------------------
+-
+ class AutonomousAgentLoop:
+     """
+     Main agent loop for autonomous W2S research.
+ 
+-    Each iteration is a fresh Claude session. Agent reads/writes findings.json
++    Each iteration is a fresh provider session. Agent reads/writes findings.json
+     directly. Only stop condition: timeout.
+     """
+ 
+@@ -421,17 +414,23 @@ class AutonomousAgentLoop:
+ 
+         self.stop_checker = _StopChecker(max_runtime=self.max_runtime_seconds)
+ 
+-        # Create MCP servers (server API tools always needed — in local mode, server runs on localhost)
++        # Create MCP servers (Claude SDK path). Grok CLI path skips in-process MCP.
+         self.mcp_servers = {}
+-        try:
+-            self.mcp_servers["server-api-tools"] = create_server_api_tools_server()
+-        except Exception as e:
+-            print(f"[Init] Warning: server API tools unavailable: {e}")
+-        if not local_mode:
++        _prov = (os.getenv("AAR_AGENT_PROVIDER") or "claude_sdk").strip().lower()
++        if _prov not in ("grok", "grok_cli", "xai_grok"):
+             try:
+-                self.mcp_servers["prior-work-tools"] = create_prior_work_tools_server()
++                from .tools.server_api_tools import create_server_api_tools_server
++                self.mcp_servers["server-api-tools"] = create_server_api_tools_server()
+             except Exception as e:
+-                print(f"[Init] Warning: prior work tools unavailable: {e}")
++                print(f"[Init] Warning: server API tools unavailable: {e}")
++            if not local_mode:
++                try:
++                    from .tools.prior_work_tools import create_prior_work_tools_server
++                    self.mcp_servers["prior-work-tools"] = create_prior_work_tools_server()
++                except Exception as e:
++                    print(f"[Init] Warning: prior work tools unavailable: {e}")
++        else:
++            print("[Init] AAR_AGENT_PROVIDER=grok_cli — skipping Claude MCP servers")
+ 
+         # Findings sync: disabled in local mode (no other workers)
+         self.findings_sync = None
+@@ -457,28 +456,39 @@ class AutonomousAgentLoop:
+         return self._prompt
+ 
+     def _create_agent(self, session_id: str, message_callback=None) -> BaseAgent:
++        provider = get_agent_provider()
+         allowed_tools = [
+             "Read", "Write", "Edit", "Bash", "Glob", "Grep",
+             "WebSearch", "WebFetch",
+-            "mcp__server-api-tools__evaluate_model",
+-            "mcp__server-api-tools__evaluate_predictions",
+-            "mcp__server-api-tools__share_finding",
+-            "mcp__server-api-tools__get_leaderboard",
+-            "mcp__server-api-tools__get_literature",
+-            "mcp__server-api-tools__share_literature",
+-            "mcp__server-api-tools__submit_idea_proposal",
+         ]
+-        if not self.local_mode:
+-            allowed_tools.append("mcp__prior-work-tools__download_snapshot")
++        mcp_servers = self.mcp_servers
++        cli_path = None
++        if getattr(provider, "name", "") == "claude_sdk":
++            allowed_tools.extend([
++                "mcp__server-api-tools__evaluate_model",
++                "mcp__server-api-tools__evaluate_predictions",
++                "mcp__server-api-tools__share_finding",
++                "mcp__server-api-tools__get_leaderboard",
++                "mcp__server-api-tools__get_literature",
++                "mcp__server-api-tools__share_literature",
++                "mcp__server-api-tools__submit_idea_proposal",
++            ])
++            if not self.local_mode:
++                allowed_tools.append("mcp__prior-work-tools__download_snapshot")
++            cli_path = shutil.which("claude")
++        else:
++            # Non-Claude backends: built-in tools only; research eval via Bash/scripts.
++            mcp_servers = {}
+ 
+         return BaseAgent(
+             name=f"autonomous-{session_id}",
+             allowed_tools=allowed_tools,
+             workspace=self.workspace,
+-            mcp_servers=self.mcp_servers,
++            mcp_servers=mcp_servers,
+             model=self.model,
+-            cli_path=shutil.which("claude"),
++            cli_path=cli_path,
+             message_callback=message_callback,
++            provider=provider,
+         )
+ 
+     async def run(self) -> Dict[str, Any]:
+diff --git a/aar/research_loop/provider.py b/aar/research_loop/provider.py
+new file mode 100644
+index 0000000..d086a17
+--- /dev/null
++++ b/aar/research_loop/provider.py
+@@ -0,0 +1,103 @@
++"""Provider-neutral researcher-inference seam for AutonomousAgentLoop.
++
++No vendor-specific imports here. Backends: claude_sdk (legacy), grok_cli (downstream).
++"""
++from __future__ import annotations
++
++import importlib
++import os
++from dataclasses import dataclass, field
++from pathlib import Path
++from typing import Any, AsyncIterator, Optional, Protocol, Union, runtime_checkable
++
++
++@dataclass
++class TextPart:
++    text: str
++
++
++@dataclass
++class ToolUsePart:
++    name: str
++    input: dict
++    id: Optional[str] = None
++
++
++@dataclass
++class ThinkingPart:
++    thinking: str
++
++
++Part = Union[TextPart, ToolUsePart, ThinkingPart]
++
++
++@dataclass
++class AssistantEvent:
++    content: list
++
++
++@dataclass
++class ResultEvent:
++    result: Any = None
++    stop_reason: Optional[str] = None
++
++
++ProviderEvent = Union[AssistantEvent, ResultEvent]
++
++
++@dataclass
++class SessionOptions:
++    model: str
++    cwd: str | Path
++    system_prompt: Optional[str] = None
++    allowed_tools: Optional[list[str]] = None
++    permission_mode: str = "bypassPermissions"
++    mcp_servers: Optional[dict[str, Any]] = None
++    max_turns: Optional[int] = None
++    cli_path: Optional[str] = None
++    extra: dict[str, Any] = field(default_factory=dict)
++
++
++class ProviderError(Exception):
++    def __init__(self, message: str, code: Optional[str] = None, retryable: bool = False):
++        super().__init__(message)
++        self.code = code
++        self.retryable = retryable
++
++
++@runtime_checkable
++class AgentSession(Protocol):
++    async def __aenter__(self) -> "AgentSession": ...
++    async def __aexit__(self, *exc: Any) -> None: ...
++    async def query(self, task: str) -> None: ...
++    def receive_response(self) -> AsyncIterator[ProviderEvent]: ...
++
++
++@runtime_checkable
++class AgentProvider(Protocol):
++    name: str
++
++    def session(self, options: SessionOptions) -> AgentSession: ...
++
++
++def get_agent_provider(name: Optional[str] = None) -> AgentProvider:
++    """Factory. AAR_AGENT_PROVIDER=claude_sdk|grok_cli (default claude_sdk)."""
++    name = (name or os.getenv("AAR_AGENT_PROVIDER") or "claude_sdk").strip().lower()
++    if name in ("claude", "claude_sdk", "anthropic"):
++        from aar.research_loop.providers.claude_sdk import ClaudeSDKProvider
++        return ClaudeSDKProvider()
++    if name in ("grok", "grok_cli", "xai_grok"):
++        mod_path = os.getenv(
++            "AAR_GROK_PROVIDER_MODULE",
++            "aar_xai_adapter_001.provider.grok_cli",
++        )
++        # Ensure downstream/poc is on path for aar_xai_adapter_001
++        poc_root = Path(__file__).resolve().parents[2] / "downstream" / "poc"
++        import sys
++        if str(poc_root) not in sys.path:
++            sys.path.insert(0, str(poc_root))
++        mod = importlib.import_module(mod_path)
++        if hasattr(mod, "get_provider"):
++            return mod.get_provider()
++        return mod.GrokCLIProvider()
++    raise ProviderError(f"unknown AAR_AGENT_PROVIDER={name!r}", code="UNKNOWN_PROVIDER")
+diff --git a/aar/research_loop/providers/__init__.py b/aar/research_loop/providers/__init__.py
+new file mode 100644
+index 0000000..ed16472
+--- /dev/null
++++ b/aar/research_loop/providers/__init__.py
+@@ -0,0 +1 @@
++"""Built-in researcher inference backends (Claude). Grok lives downstream."""
+diff --git a/aar/research_loop/providers/claude_sdk.py b/aar/research_loop/providers/claude_sdk.py
+new file mode 100644
+index 0000000..7e42a63
+--- /dev/null
++++ b/aar/research_loop/providers/claude_sdk.py
+@@ -0,0 +1,95 @@
++"""Claude Agent SDK backend — preserves upstream default researcher path."""
++from __future__ import annotations
++
++from typing import Any, AsyncIterator, Optional
++
++from aar.research_loop.provider import (
++    AgentProvider,
++    AgentSession,
++    AssistantEvent,
++    ProviderError,
++    ResultEvent,
++    SessionOptions,
++    TextPart,
++    ThinkingPart,
++    ToolUsePart,
++)
++
++
++class ClaudeSDKSession:
++    def __init__(self, options: SessionOptions):
++        self._options = options
++        self._client = None
++        self._task: Optional[str] = None
++
++    async def __aenter__(self) -> "ClaudeSDKSession":
++        try:
++            from claude_agent_sdk import ClaudeSDKClient, ClaudeAgentOptions
++        except ImportError as e:
++            raise ProviderError(
++                f"claude_agent_sdk not installed: {e}",
++                code="CLAUDE_SDK_MISSING",
++                retryable=False,
++            ) from e
++        opt = self._options
++        options_dict: dict[str, Any] = {
++            "allowed_tools": opt.allowed_tools or [],
++            "system_prompt": opt.system_prompt,
++            "permission_mode": opt.permission_mode,
++            "cwd": str(opt.cwd),
++            "model": opt.model,
++            "mcp_servers": opt.mcp_servers or {},
++            "setting_sources": opt.extra.get("setting_sources", ["project"]),
++            "betas": opt.extra.get("betas", ["context-1m-2025-08-07"]),
++            "thinking": opt.extra.get("thinking", {"type": "adaptive", "display": "summarized"}),
++            "effort": opt.extra.get("effort", "max"),
++        }
++        if opt.cli_path:
++            options_dict["cli_path"] = opt.cli_path
++        self._ClaudeSDKClient = ClaudeSDKClient
++        self._client_cm = ClaudeSDKClient(options=ClaudeAgentOptions(**options_dict))
++        self._client = await self._client_cm.__aenter__()
++        return self
++
++    async def __aexit__(self, *exc: Any) -> None:
++        if self._client_cm is not None:
++            await self._client_cm.__aexit__(*exc)
++
++    async def query(self, task: str) -> None:
++        self._task = task
++        await self._client.query(task)
++
++    async def receive_response(self) -> AsyncIterator:
++        from claude_agent_sdk import (
++            AssistantMessage,
++            ResultMessage,
++            TextBlock,
++            ToolUseBlock,
++        )
++        async for message in self._client.receive_response():
++            if isinstance(message, ResultMessage):
++                yield ResultEvent(result=getattr(message, "result", None), stop_reason="result")
++                return
++            if isinstance(message, AssistantMessage):
++                parts = []
++                for content in message.content:
++                    if isinstance(content, TextBlock):
++                        parts.append(TextPart(text=content.text))
++                    elif isinstance(content, ToolUseBlock):
++                        parts.append(
++                            ToolUsePart(
++                                name=content.name,
++                                input=content.input or {},
++                                id=getattr(content, "id", None),
++                            )
++                        )
++                    elif hasattr(content, "thinking"):
++                        parts.append(ThinkingPart(thinking=content.thinking))
++                yield AssistantEvent(content=parts)
++
++
++class ClaudeSDKProvider:
++    name = "claude_sdk"
++
++    def session(self, options: SessionOptions) -> ClaudeSDKSession:
++        return ClaudeSDKSession(options)
+diff --git a/run.py b/run.py
+index 7489d93..4c9d844 100644
+--- a/run.py
++++ b/run.py
+@@ -30,9 +30,12 @@ def cmd_agent(args, remaining):
+     """Launch autonomous research agent."""
+     import asyncio
+ 
+-    if not os.getenv("ANTHROPIC_API_KEY"):
+-        print("Error: ANTHROPIC_API_KEY is required for agent mode")
+-        sys.exit(1)
++    provider = (os.getenv("AAR_AGENT_PROVIDER") or "claude_sdk").strip().lower()
++    # Grok CLI uses local OIDC via official grok binary — no Anthropic key.
++    if provider not in ("grok", "grok_cli", "xai_grok"):
++        if not os.getenv("ANTHROPIC_API_KEY"):
++            print("Error: ANTHROPIC_API_KEY is required for agent mode")
++            sys.exit(1)
+ 
+     local_mode = getattr(args, 'local', False)
+ 

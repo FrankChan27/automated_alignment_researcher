@@ -1,0 +1,12 @@
+{
+  "AUTH_JSON_PRESENT": true,
+  "path": "/home/box/.grok/auth.json",
+  "mode": "600",
+  "size_bytes": 1732,
+  "auth_mode": "oidc",
+  "expires_at": "2026-09-28T07:04:17.719857934Z",
+  "oidc_issuer": "https://auth.x.ai",
+  "HAS_KEY": true,
+  "HAS_REFRESH_TOKEN": true,
+  "PII_FIELDS_PRESENT": true
+}

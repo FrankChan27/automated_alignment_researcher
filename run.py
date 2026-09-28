@@ -30,9 +30,12 @@ def cmd_agent(args, remaining):
     """Launch autonomous research agent."""
     import asyncio
 
-    if not os.getenv("ANTHROPIC_API_KEY"):
-        print("Error: ANTHROPIC_API_KEY is required for agent mode")
-        sys.exit(1)
+    provider = (os.getenv("AAR_AGENT_PROVIDER") or "claude_sdk").strip().lower()
+    # Grok CLI uses local OIDC via official grok binary — no Anthropic key.
+    if provider not in ("grok", "grok_cli", "xai_grok"):
+        if not os.getenv("ANTHROPIC_API_KEY"):
+            print("Error: ANTHROPIC_API_KEY is required for agent mode")
+            sys.exit(1)
 
     local_mode = getattr(args, 'local', False)
 

@@ -7,7 +7,7 @@
 ## Non-negotiables
 
 - Preserve upstream research semantics: iteration = fresh session; stop = timeout | max_iterations; findings / evaluate_model / share_finding / submit_idea_proposal contracts; same 8D task as POC-002 later.
-- Forbidden auth for researcher: Cursor, Anthropic API, xAI API Key, hand-stuffed Bearer to api.x.ai.
+- Forbidden auth for researcher: Cursor, Anthropic API, xAI API Key, hand-stuffed auth header to api.x.ai.
 - Allowed auth: official `grok` CLI local OIDC (`~/.grok/auth.json`).
 - Prefer **downstream-only** Grok backend; **core** only to unbind Claude hardwire behind this contract.
 - No secrets/PII in artifacts.

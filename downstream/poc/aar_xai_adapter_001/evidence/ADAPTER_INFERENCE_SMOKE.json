@@ -1,0 +1,9 @@
+{
+  "SMOKE_TOKEN": "XAI_ADAPTER_001_SMOKE_OK",
+  "SMOKE_EXACT_OR_CONTAINS": true,
+  "API_KEY_USED": false,
+  "PROVIDER": "grok_cli",
+  "MODEL": "grok-4.7",
+  "AUTH_MODE": "oidc",
+  "output_head": "XAI_ADAPTER_001_SMOKE_OK"
+}

@@ -1,0 +1,4 @@
+timestamp_utc8=2026-09-28T09:07:33+0800
+HEAD=b5c3dd3c3f9db8f2acd2a0edb05917c9aaf11df0
+Error: ANTHROPIC_API_KEY is required for agent mode
+EXIT:1
