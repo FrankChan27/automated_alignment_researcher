@@ -1,6 +1,9 @@
 """
-Autonomous W2S research agent using Claude Agent SDK.
+Autonomous W2S research agent.
 
+Uses a provider-neutral seam (aar.research_loop.provider) so researcher
+inference can run via the built-in Claude Agent SDK or an external plugin
+loaded by AAR_AGENT_PROVIDER_MODULE (capability flags, not vendor name branches).
 Merges agent_loop, base_agent, and stop_conditions into a single file.
 """
 
@@ -18,13 +21,15 @@ from enum import Enum
 from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional
 
-from claude_agent_sdk import (
-    ClaudeSDKClient,
-    ClaudeAgentOptions,
-    AssistantMessage,
-    ResultMessage,
-    TextBlock,
-    ToolUseBlock,
+from aar.research_loop.provider import (
+    AssistantEvent,
+    ProviderError,
+    ResultEvent,
+    SessionOptions,
+    TextPart,
+    ThinkingPart,
+    ToolUsePart,
+    get_agent_provider,
 )
 
 from aar.config import (
@@ -43,8 +48,7 @@ from aar.config import (
     SERVER_URL,
     AAR_MODE,
 )
-from .tools.server_api_tools import create_server_api_tools_server
-from .tools.prior_work_tools import create_prior_work_tools_server
+# MCP tool servers import claude_agent_sdk — load lazily when provider.supports_inprocess_mcp.
 from .tools.findings_sync import FindingsSync
 
 
@@ -223,7 +227,7 @@ OVERLOADED_MAX_RETRIES = int(os.getenv("OVERLOADED_MAX_RETRIES", "6"))
 # ---------------------------------------------------------------------------
 
 class BaseAgent:
-    """Wraps ClaudeSDKClient for research tasks."""
+    """Provider-neutral research agent session wrapper."""
 
     def __init__(
         self,
@@ -236,6 +240,7 @@ class BaseAgent:
         cli_path: Optional[str] = None,
         message_callback: Optional[Callable] = None,
         system_prompt: Optional[str] = None,
+        provider=None,
     ):
         self.name = name
         self.allowed_tools = allowed_tools
@@ -246,27 +251,30 @@ class BaseAgent:
         self.cli_path = cli_path
         self.message_callback = message_callback
         self.system_prompt = system_prompt
+        self.provider = provider or get_agent_provider()
 
     async def execute(self, task: str) -> AgentResult:
         """Execute agent task. Returns AgentResult.
 
-        If the API returns a 529 'Overloaded' error, wait OVERLOADED_WAIT_SECONDS
-        (default 10 min) and retry the same session, up to OVERLOADED_MAX_RETRIES
-        times — a capacity blip shouldn't burn an iteration or kill the chain.
+        If the provider returns a retryable error (e.g. Claude 529 Overloaded),
+        wait OVERLOADED_WAIT_SECONDS and retry up to OVERLOADED_MAX_RETRIES.
         """
         start_time = time.time()
         overloaded_retries = 0
 
         while True:
-            iteration_count = 0
-            messages = []
             try:
                 return await self._execute_once(task, start_time)
             except Exception as e:
-                if _is_overloaded(e) and overloaded_retries < OVERLOADED_MAX_RETRIES:
+                retryable = False
+                if isinstance(e, ProviderError):
+                    retryable = e.retryable
+                elif _is_overloaded(e):
+                    retryable = True
+                if retryable and overloaded_retries < OVERLOADED_MAX_RETRIES:
                     overloaded_retries += 1
                     print(
-                        f"[{self.name}] API overloaded (529). Waiting "
+                        f"[{self.name}] Provider overloaded/retryable. Waiting "
                         f"{OVERLOADED_WAIT_SECONDS}s before retry "
                         f"{overloaded_retries}/{OVERLOADED_MAX_RETRIES}..."
                     )
@@ -281,73 +289,63 @@ class BaseAgent:
                 )
 
     async def _execute_once(self, task: str, start_time: float) -> AgentResult:
-        """One attempt at running the session (no retry). Raises on API error so
-        execute() can decide whether to retry (529) or give up."""
+        """One attempt at running the session (no retry). Raises on provider error."""
         iteration_count = 0
         messages = []
 
-        if True:
-            options_dict = {
-                "allowed_tools": self.allowed_tools,
-                "system_prompt": self.system_prompt,
-                "permission_mode": self.permission_mode,
-                "cwd": str(self.workspace),
-                "model": self.model,
-                "mcp_servers": self.mcp_servers,
+        options = SessionOptions(
+            allowed_tools=self.allowed_tools,
+            system_prompt=self.system_prompt,
+            permission_mode=self.permission_mode,
+            cwd=str(self.workspace),
+            model=self.model,
+            mcp_servers=self.mcp_servers,
+            cli_path=self.cli_path,
+            max_turns=int(os.getenv("AAR_PROVIDER_MAX_TURNS")) if os.getenv("AAR_PROVIDER_MAX_TURNS") else None,
+            extra={
                 "setting_sources": ["project"],
                 "betas": ["context-1m-2025-08-07"],
-                # Extended thinking. Claude 4.x+ models (fable-5, opus-4.8) use ADAPTIVE thinking and
-                # default the thinking `display` to "omitted" -> the model thinks but the summary is
-                # withheld (empty ThinkingBlock.thinking, signature only -> empty [THINKING] in logs).
-                # Set display="summarized" to surface the reasoning summary the session-log callback
-                # persists. Manual `max_thinking_tokens` (=> thinking type "enabled"/budget_tokens) is
-                # REJECTED on these models — depth is controlled by `effort` instead (default "high";
-                # bump to xhigh/max via AAR_EFFORT).
                 "thinking": {"type": "adaptive", "display": "summarized"},
                 "effort": os.getenv("AAR_EFFORT", "max"),
-            }
-            if self.cli_path:
-                options_dict["cli_path"] = self.cli_path
+            },
+        )
 
-            options = ClaudeAgentOptions(**options_dict)
+        async with self.provider.session(options) as client:
+            await client.query(task)
 
-            async with ClaudeSDKClient(options=options) as client:
-                await client.query(task)
+            async for message in client.receive_response():
+                messages.append(message)
 
-                async for message in client.receive_response():
-                    messages.append(message)
+                log_msg = self._format_message(message)
+                if log_msg:
+                    print(log_msg)
 
-                    # Log
-                    log_msg = self._format_message(message)
-                    if log_msg:
-                        print(log_msg)
+                if self.message_callback:
+                    self.message_callback(message)
 
-                    if self.message_callback:
-                        self.message_callback(message)
+                if isinstance(message, ResultEvent):
+                    break
 
-                    if isinstance(message, ResultMessage):
-                        break
+                if isinstance(message, AssistantEvent):
+                    for content in message.content:
+                        if isinstance(content, ToolUsePart):
+                            iteration_count += 1
 
-                    if isinstance(message, AssistantMessage):
-                        for content in message.content:
-                            if isinstance(content, ToolUseBlock):
-                                iteration_count += 1
-
-                return AgentResult(
-                    success=True,
-                    output=self._extract_output(messages),
-                    duration=time.time() - start_time,
-                    iteration_count=iteration_count,
-                )
+            return AgentResult(
+                success=True,
+                output=self._extract_output(messages),
+                duration=time.time() - start_time,
+                iteration_count=iteration_count,
+            )
 
     def _format_message(self, message) -> Optional[str]:
         ts = datetime.now().strftime("%H:%M:%S")
-        if isinstance(message, AssistantMessage):
+        if isinstance(message, AssistantEvent):
             parts = []
             for content in message.content:
-                if isinstance(content, TextBlock):
+                if isinstance(content, TextPart):
                     parts.append(f"[{ts}] [{self.name}] {content.text[:200]}")
-                elif isinstance(content, ToolUseBlock):
+                elif isinstance(content, ToolUsePart):
                     tool_input = content.input or {}
                     detail = ""
                     if content.name == "Bash":
@@ -356,33 +354,29 @@ class BaseAgent:
                         detail = f" {tool_input.get('file_path', '')}"
                     parts.append(f"[{ts}] [{self.name}] -> {content.name}{detail}")
             return "\n".join(parts) if parts else None
-        elif isinstance(message, ResultMessage):
+        elif isinstance(message, ResultEvent):
             return f"[{ts}] [{self.name}] Done"
         return None
 
     def _extract_output(self, messages) -> Dict[str, Any]:
         output = {"text_outputs": [], "tool_uses": []}
         for msg in messages:
-            if isinstance(msg, AssistantMessage):
+            if isinstance(msg, AssistantEvent):
                 for content in msg.content:
-                    if isinstance(content, TextBlock):
+                    if isinstance(content, TextPart):
                         output["text_outputs"].append(content.text)
-                    elif isinstance(content, ToolUseBlock):
+                    elif isinstance(content, ToolUsePart):
                         output["tool_uses"].append({"tool": content.name, "input": content.input})
-            if isinstance(msg, ResultMessage):
+            if isinstance(msg, ResultEvent):
                 output["result_message"] = msg.result
         return output
 
-
-# ---------------------------------------------------------------------------
-# Main autonomous loop
-# ---------------------------------------------------------------------------
 
 class AutonomousAgentLoop:
     """
     Main agent loop for autonomous W2S research.
 
-    Each iteration is a fresh Claude session. Agent reads/writes findings.json
+    Each iteration is a fresh provider session. Agent reads/writes findings.json
     directly. Only stop condition: timeout.
     """
 
@@ -421,17 +415,23 @@ class AutonomousAgentLoop:
 
         self.stop_checker = _StopChecker(max_runtime=self.max_runtime_seconds)
 
-        # Create MCP servers (server API tools always needed — in local mode, server runs on localhost)
+        # Create MCP servers only when provider supports in-process MCP (capability flag).
         self.mcp_servers = {}
-        try:
-            self.mcp_servers["server-api-tools"] = create_server_api_tools_server()
-        except Exception as e:
-            print(f"[Init] Warning: server API tools unavailable: {e}")
-        if not local_mode:
+        self._provider = get_agent_provider()
+        if getattr(self._provider, "supports_inprocess_mcp", False):
             try:
-                self.mcp_servers["prior-work-tools"] = create_prior_work_tools_server()
+                from .tools.server_api_tools import create_server_api_tools_server
+                self.mcp_servers["server-api-tools"] = create_server_api_tools_server()
             except Exception as e:
-                print(f"[Init] Warning: prior work tools unavailable: {e}")
+                print(f"[Init] Warning: server API tools unavailable: {e}")
+            if not local_mode:
+                try:
+                    from .tools.prior_work_tools import create_prior_work_tools_server
+                    self.mcp_servers["prior-work-tools"] = create_prior_work_tools_server()
+                except Exception as e:
+                    print(f"[Init] Warning: prior work tools unavailable: {e}")
+        else:
+            print("[Init] provider supports_inprocess_mcp=False — skipping in-process MCP")
 
         # Findings sync: disabled in local mode (no other workers)
         self.findings_sync = None
@@ -457,28 +457,39 @@ class AutonomousAgentLoop:
         return self._prompt
 
     def _create_agent(self, session_id: str, message_callback=None) -> BaseAgent:
+        provider = getattr(self, "_provider", None) or get_agent_provider()
         allowed_tools = [
             "Read", "Write", "Edit", "Bash", "Glob", "Grep",
             "WebSearch", "WebFetch",
-            "mcp__server-api-tools__evaluate_model",
-            "mcp__server-api-tools__evaluate_predictions",
-            "mcp__server-api-tools__share_finding",
-            "mcp__server-api-tools__get_leaderboard",
-            "mcp__server-api-tools__get_literature",
-            "mcp__server-api-tools__share_literature",
-            "mcp__server-api-tools__submit_idea_proposal",
         ]
-        if not self.local_mode:
-            allowed_tools.append("mcp__prior-work-tools__download_snapshot")
+        mcp_servers = self.mcp_servers
+        cli_path = None
+        if getattr(provider, "supports_inprocess_mcp", False):
+            allowed_tools.extend([
+                "mcp__server-api-tools__evaluate_model",
+                "mcp__server-api-tools__evaluate_predictions",
+                "mcp__server-api-tools__share_finding",
+                "mcp__server-api-tools__get_leaderboard",
+                "mcp__server-api-tools__get_literature",
+                "mcp__server-api-tools__share_literature",
+                "mcp__server-api-tools__submit_idea_proposal",
+            ])
+            if not self.local_mode:
+                allowed_tools.append("mcp__prior-work-tools__download_snapshot")
+            cli_path = shutil.which("claude")
+        else:
+            # External backends without in-process MCP: built-in tools only; eval via Bash.
+            mcp_servers = {}
 
         return BaseAgent(
             name=f"autonomous-{session_id}",
             allowed_tools=allowed_tools,
             workspace=self.workspace,
-            mcp_servers=self.mcp_servers,
+            mcp_servers=mcp_servers,
             model=self.model,
-            cli_path=shutil.which("claude"),
+            cli_path=cli_path,
             message_callback=message_callback,
+            provider=provider,
         )
 
     async def run(self) -> Dict[str, Any]:

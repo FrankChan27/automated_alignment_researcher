@@ -7,7 +7,7 @@
 | Field | Value |
 |-------|-------|
 | Registry date | **2026-09-28** (UTC) / **2026-09-28 UTC+8** |
-| Base branch for this docs commit | `origin/main` @ `a6493c288ead7e9e7fbb35311a136c70eca37108` |
+| Base branch for this docs commit | `origin/main` @ `86e9578f01ef213fa1c14bf36f0825cdc0dfda98` (pre-promotion) → provider seam promotion |
 | Upstream pin (`downstream/UPSTREAM_PIN.json`) | `02dbe9d2cadc553720d17cdf6259c0b8727e6cde` |
 | Census sources (workspace, not shipped) | Phase 0–1 drafts under `aar_connectivity_registry_work/` (PHASE0, EVIDENCE_CENSUS, PRODUCT_STATUS_DRAFT) |
 | Scope | Evidence already on GitHub downstream smoke/review commits; **no smoke re-run**; **CURSOR_USED=false**; **no Anthropic API** for this docs mission |
@@ -41,17 +41,28 @@ As of **2026-09-28**:
 
 ## Architecture
 
-### On `main` (docs base `a6493c2…`)
+### ARCHITECTURE_STATUS vs PRODUCT_CONNECTIVITY_STATUS
 
-- Researcher path hard-binds Anthropic: `run.py` requires `ANTHROPIC_API_KEY`; `aar/research_loop/agent.py` uses `ClaudeSDKClient`.
-- **No** `aar/research_loop/provider.py` on `main`.
+| Field | Meaning |
+|-------|---------|
+| **ARCHITECTURE_STATUS** | Whether the generic Provider seam exists on the cited branch |
+| **PRODUCT_CONNECTIVITY_STATUS** | Whether a named product entry has verified live smoke (matrix below) |
 
-### On downstream provider lineage (not merged to `main` as of this registry)
+These are independent. Promoting the seam to `main` does **not** auto-flip Cursor / Build Web / Claude product statuses.
 
-- Tip `downstream/aar-provider-002` @ `01067d70f001ee99b229089acd0dba63e7f3a5ed`: **VENDOR_NEUTRAL** loader in `aar/research_loop/provider.py`.
-- Built-in LEGACY: `claude` / `claude_sdk` / `anthropic` → `ClaudeSDKProvider`.
-- External: requires `AAR_AGENT_PROVIDER_MODULE` (+ optional `AAR_AGENT_PROVIDER_PATH`); capability flags `requires_anthropic_key`, `supports_inprocess_mcp`.
-- `CORE_VENDOR_REFERENCES=0` for Grok/xAI name knowledge in `aar/research_loop/**/*.py` + `run.py` (Anthropic strings elsewhere in `aar/` may remain).
+### On `main` (after vendor-neutral Provider promotion)
+
+- **VENDOR_NEUTRAL_PROVIDER_SEAM_ON_MAIN=true**
+- `aar/research_loop/provider.py` — generic contract + `get_agent_provider()` factory
+- Built-in LEGACY: `claude` / `claude_sdk` / `anthropic` → `ClaudeSDKProvider` (structural; live Anthropic smoke still PENDING_VERIFICATION)
+- External: requires `AAR_AGENT_PROVIDER_MODULE` (+ optional `AAR_AGENT_PROVIDER_PATH` / `AAR_AGENT_PROVIDER_CLASS`); capability flags `requires_anthropic_key`, `supports_inprocess_mcp`
+- `GENERIC_CORE_GROK_HARDCODE=false`, `GENERIC_CORE_CURSOR_HARDCODE=false`
+- Runtime-specific adapters (optional): `aar/integrations/providers/` — e.g. `grok_bot_gateway` (**NOT** a public stable API; depends on local sand gateway Bearer)
+
+### Historical source (downstream, immutable evidence)
+
+- Tip `downstream/aar-provider-002` @ `01067d70f001ee99b229089acd0dba63e7f3a5ed`: original **VENDOR_NEUTRAL** loader extracted into core (not wholesale PoC merge).
+- Grok Bot Grok入口 smoke evidence remains on `downstream/aar-grok-bot-smoke` @ `2ca87d605996daf5269ffe972663343a5777c206` (unchanged).
 
 ### Layer model (Grok Build discovery)
 
@@ -255,14 +266,14 @@ Supporting (not product CONNECTED alone): oauth-001 `4c035dd6e8e716c854f694a2fe5
 
 ## Known Limitations
 
-1. Provider seam + OUT providers live on **downstream** branches; **not** on `main` as of `a6493c2…`.
-2. Grok Build Web: layer C missing — **NOT_CONNECTED** until a workspace-callable invocation surface exists.
-3. Grok Bot Grok入口 auth is **runtime-local** gateway Bearer — ephemeral to the sand host; not a public API contract.
-4. Grok Bot 独立入口 AUTH is **multi-valued** (OIDC vs API key variant); environments differ.
-5. Grok入口 smoke advanced workspace artifacts, **not** `STATE.json` history.
-6. Claude live agent on unpatched `main` requires Anthropic credentials; POC-002 froze operational BLOCKED without them.
+1. **RESOLVED for architecture:** vendor-neutral Provider seam is on `main` (`VENDOR_NEUTRAL_PROVIDER_SEAM_ON_MAIN=true`). Historical PoC/smoke evidence remains on immutable downstream branches.
+2. Grok Build Web: layer C missing — **NOT_CONNECTED** until a workspace-callable invocation surface exists. (Status unchanged; no re-smoke this round.)
+3. Grok Bot Grok入口 auth is **runtime-local** gateway Bearer — ephemeral to the sand host; `aar/integrations/providers/grok_bot_gateway.py` is **NOT** marketed as a public stable API.
+4. Grok Bot 独立入口 AUTH is **multi-valued** (OIDC vs API key variant); environments differ. `GrokCLIProvider` remains downstream (`KEEP_ADAPTER_DOWNSTREAM`) unless separately promoted.
+5. Grok入口 historical smoke advanced workspace artifacts, **not** `STATE.json` history.
+6. Claude live agent still requires Anthropic credentials for a live CONNECTED claim; structural LEGACY path preserved (`CLAUDE_LIVE_SMOKE_EXECUTED=false` unless a new live smoke is recorded).
 7. `api.x.ai` OAuth (non-CLI) marked `NOT_TESTED_NOT_JUSTIFIED` in oauth-002 — not a CONNECTED claim.
-8. This registry commit is **DOCUMENTATION_ONLY** — it does not merge smoke implementation onto `main`.
+8. Product CONNECTED rows are evidence-gated; architecture promotion alone does not flip Cursor / Build Web / Claude statuses.
 
 ---
 
@@ -273,7 +284,7 @@ Supporting (not product CONNECTED alone): oauth-001 `4c035dd6e8e716c854f694a2fe5
 | Cursor | `NO_VERIFIED_SMOKE_FOUND` | Formal OUT `AgentProvider` + native loop smoke + independent REVIEW with immutable SHA/paths |
 | Claude / upstream live CONNECTED | Default code path exists; no census live Anthropic smoke | Live `AutonomousAgentLoop` smoke with Anthropic allowed + REVIEW; or explicit registry policy mapping POC-002 BLOCKED → product BLOCKED |
 | `api.x.ai` OAuth as researcher AUTH | Not tested/justified in oauth-002 | Dedicated smoke + review |
-| Provider seam on `main` | Seam only on downstream provider lineage | Merge/acceptance of provider architecture onto default branch (separate from this docs file) |
+| Provider seam on `main` | **DONE** — seam promoted; see Architecture | Production tests + live Grok Bot (Grok入口) regression on promotion PR |
 
 ---
 
