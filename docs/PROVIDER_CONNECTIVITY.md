@@ -23,6 +23,7 @@ As of **2026-09-28**:
 | Grok Build Web | (Build Agent / workspace) | **NOT_CONNECTED** |
 | Cursor | — | **PENDING_VERIFICATION** |
 | Claude / upstream AAR | default / LEGACY | **PENDING_VERIFICATION** |
+| ChatGPT Work Mode | current conversation | **NOT_CONNECTED** (local probe; no workspace-callable researcher transport) |
 
 **Columns are independent:** PRODUCT ≠ PRODUCT_ENTRY ≠ PRODUCT_FORM ≠ AGENT_RUNTIME ≠ PROVIDER ≠ TRANSPORT ≠ AUTH. Do not rename “Grok Bot — 独立入口” to “Grok Build CLI” when TRANSPORT=`grok_cli`.
 
@@ -254,6 +255,12 @@ Supporting (not product CONNECTED alone): oauth-001 `4c035dd6e8e716c854f694a2fe5
 ---
 
 ## Known Limitations
+
+### ChatGPT Work Mode probe (2026-09-28)
+
+The interactive assistant cloned `main` at `86e9578f01ef213fa1c14bf36f0825cdc0dfda98` and ran `bash generic_aar/run_example.sh`: `stub:perfect` produced headline 100% with capability gate PASS; `stub:weak` produced 55.28% with capability gate FAIL. This verifies the local evaluation harness only. The current workspace exposes no `codex`, `claude`, or `grok` executable, no researcher model credential, and no tool that lets an AAR Python process invoke this Work Mode conversation. The provider seam is also only on downstream branches. Consequently `AAR_LOOP_EXECUTED=false` and `AAR_RESEARCHER_EXECUTED=false` for Work Mode; no live integration or scientific improvement is claimed. Recheck if a workspace-callable agent transport becomes available.
+
+The Grok入口 smoke's `AAR_WORKSPACE_ADVANCED=true` refers to changed findings and experiment files. Its `AAR_STATE_JSON_ADVANCED=false` refers to unchanged `STATE.json` history; these flags must remain separate in downstream reports.
 
 1. Provider seam + OUT providers live on **downstream** branches; **not** on `main` as of `a6493c2…`.
 2. Grok Build Web: layer C missing — **NOT_CONNECTED** until a workspace-callable invocation surface exists.
