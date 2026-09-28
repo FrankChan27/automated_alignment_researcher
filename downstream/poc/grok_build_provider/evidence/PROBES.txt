@@ -1,0 +1,35 @@
+PROBES (redacted)
+date_utc=2026-09-28
+workspace_server_version=1.0.63
+diag_socket=/tmp/workspace-server.sock
+diag_ready=HTTP/1.1 200 state=connected
+diag_statusz=HTTP/1.1 200 image_capabilities_declared=true
+diag_routes_404=/ /health /healthz /metrics /tools /v1 /v1/agent /v1/chat/completions /agent /api/agent /subagent /spawn_subagent /rpc /hooks /status /debug /debug/pprof
+unix_socket_paths=/tmp/workspace-server.sock
+unix_socket_inode=263646
+same_inode_alias=/var/tmp/workspace-server/tmp/workspace-server.sock
+tcp_listen=0.0.0.0:6014,127.0.0.1:6015
+preview_control_agent_route=404
+preview_state_agent_spawned=false
+preview_state_meaning=dev_server_discovery_not_llm
+hub_tool_count=34
+hub_tool_includes=spawn_subagent
+hooks_total=0
+hooks_user_prompt_submit=0
+hooks_subagent_start=0
+diag_post_spawn_subagent=404
+grok_cli_on_path=false
+python_imports_fail=grok,xai,xai_sdk,openai,anthropic,claude_agent_sdk,claude_sdk
+etc_grok=absent
+xai_api_key_present=true
+xai_api_key_used=false
+grok_cli_chat_proxy_used=false
+auth_json_read=false
+core_vendor_grep_count=0
+baseline_branch=downstream/aar-provider-002
+baseline_head=01067d70f001ee99b229089acd0dba63e7f3a5ed
+upstream_pin=02dbe9d2cadc553720d17cdf6259c0b8727e6cde
+loop_symbol=aar/research_loop/agent.py:AutonomousAgentLoop
+seam_symbol=aar/research_loop/provider.py:get_agent_provider
+aar_core_diff=none
+flag_block=downstream/poc/grok_build_provider/README.md
