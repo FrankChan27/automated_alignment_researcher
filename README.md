@@ -237,6 +237,11 @@ Notes and scope:
 
 For **Task A** you run only the bottom-right path (`publish_suite` → `run_eval`).
 
+## Agent Provider Connectivity
+
+Canonical product / runtime / provider connectivity status: [`docs/PROVIDER_CONNECTIVITY.md`](docs/PROVIDER_CONNECTIVITY.md).  
+Product entry, Agent runtime, Provider, transport, and authentication are tracked separately.
+
 ## 8. Troubleshooting
 
 - **`401` / gated dataset or model:** set `HF_TOKEN` and accept the model/dataset license on Hugging Face
