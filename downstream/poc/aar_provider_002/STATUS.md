@@ -24,6 +24,7 @@ Status: **PHASE 7 DONE — READY FOR REVIEWER (PHASE 8 is coordinator)**
 | BASELINE_NIT_1 | CLOSED |
 | BASELINE_NIT_2 | CLOSED |
 | BRANCH | downstream/aar-provider-002 |
+| HEAD_SHA | 8ccffdaa70060d1e25412a4e3f434b7ea153da1d |
 | timestamp_utc8 | 2026-09-28T10:13:22+0800 |
 
 ## Phase checklist
