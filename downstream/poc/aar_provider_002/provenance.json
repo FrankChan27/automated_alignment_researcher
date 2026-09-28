@@ -11,5 +11,6 @@
   "FREEZE_SHA": null,
   "PINNED_UPSTREAM_NOTE": "Distinct roles: BASELINE_FREEZE/REVIEW from adapter-001; IMPLEMENTATION this branch tip after commits; REVIEW/FREEZE reserved for PHASE8",
   "HUMAN": 0,
-  "timestamp_utc8": "2026-09-28T10:13:22+0800"
+  "timestamp_utc8": "2026-09-28T10:13:22+0800",
+  "HEAD_SHA": "7f5f063936fd63a31aea30c93b4e8dadb31229af"
 }
